@@ -9,33 +9,34 @@
 \date{April, 2013}
 \maketitle
 \section*{Summary:}
-Our plan for the Final Project of Advanced Computer Graphics is to implement a 3-dimensional Go game. It will support both human and computer players with an AI that we will implement as a different part of this project. We will be exploring real-time rendering of shadows in a dynamic scene containing diffuse game pieces, with changing light sources. We will also be exploring rendering of shallow water with possible light interactions.
+Our plan for the Final Project of Advanced Computer Graphics is to implement a 3-dimensional Go game. It will support both human and computer players with an AI that we will implement as a different part of this project. The goal of the project is to have a high-quality Go game with real-time rendering of shadows in a dynamic scene containing diffuse game pieces, with changing light sources.
 \section*{Related Reading:}
-We started our reading with Casting Curved Shadows on Curved Surfaces by Lance Williams \cite{williams} which invented the Shadow Mapping Technique. We looked into this method because it has been widely used in games. The technique works by checking if a pixel is in the line of sight of a light source by looking at depth values which are stored on the scene as a texture.  Upon reading we found 2 problems with Shadow Maps as is. First, the original implementation required large amounts of memory and is not necessarily computable in real time for dynamic scenes. The next issue is that is only creates hard shadows. To combat these problems we followed the reference trail to Rendering Fake Soft Shadows with Smoothies by Eric Chan \cite{smoothie} and Fredo ' Durand of MIT. Their solution takes advantage of scene geometry, as well as modern GPUs to accomplish real-time rendering. The innovation in this technique was storing alpha values based on an approximation of shadow on the shadow map. For the water, we plan on using the techniques from Realistic Water Volumes in Real-Time by Lionel Baboud and Xavier Décoret \cite{baboud}, where they use a double height map for both the water and the ground, and describe algorithms to illuminate the water using the CPU.
+We started our reading with Casting Curved Shadows on Curved Surfaces by Lance Williams \cite{williams} which invented the Shadow Mapping Technique. We looked into this method because it has been widely used in games. The technique works by checking if a pixel is in the line of sight of a light source by looking at depth values which are stored on the scene as a texture.  Upon reading we found 2 problems with Shadow Maps as is. First, the original implementation required large amounts of memory and is not necessarily computable in real time for dynamic scenes. The next issue is that is only creates hard shadows. To combat these problems we followed the reference trail to Rendering Fake Soft Shadows with Smoothies by Eric Chan \cite{smoothie} and Fredo ' Durand of MIT. Their solution takes advantage of scene geometry, as well as modern GPUs to accomplish real-time rendering. The innovation in this technique was storing alpha values based on an approximation of shadow on the shadow map.
 
 \section*{The Schedule:}
-Our plan is to divide the graphics work for the project into five distinct phases, with some extras if things go smoothly.
-The first phase, which we plan to finish by April 8th, working together, is the 3d board and support for placing pieces and a human vs. human game.
+Our plan is to divide the graphics work for the project into several phases, with some extras if things go smoothly.
+The first phase, which we planned to finish by April 8th, working together, is the 3d board and support for placing pieces and a human vs. human game.
 In the second phase, we plan to implement lighting from a point placed arbitrarily in the surroundings and shadows, notably the shadows cast by the pieces.
 In the third phase, we plan on implementing a day/night cycle with lamps, or some other form of lighting, at night. This should be done on Sunday, April 26th, and we plan for Drew to spend more time on the second phase and Benjamin to spend more time on the third phase.
-The fourth phase, which we plan to complete substantially in parallel, will be a somewhat accurate shallow water simulation. Benjamin will complete this somewhat in parallel with the other phases, but before Sunday, April 26th.
 The final phase, which we will complete even if we don't manage to finish the other phases, involves Drew polishing the general UI of our game.
 Additionally, if we finish our phases early, our plans include improving the surroundings and allowing some additional camera motion, weather including clouds or rain,light interactions with the water, and perhaps adding pieces with random deformations.
 
 \section*{Technical Challenges:}
 We have some major implementation challanges:
-The biggest is that all of the rendering needs to be in real-time, which should be 30 fps for our purposes.
-In addition, we plan on having shadows which run on the GPU, as well as water.
-That they run efficiently, and especially on the GPU is important, because we plan on using the CPU (and some of the GPU) for the Go AI.
+The biggest is that all of the rendering needs to be in real-time, which should be 30 fps for our purposes. Accordingly, we plan on having shadows which run on the GPU.
+That they run efficiently, and especially on the GPU is important, because it should be possible for a player to run the AI and play the game on the same computer.
+Furthermore, influence is a relatively vaguely defined, and so accurate visualization of it promises to be challenging.
 
 \section*{Test Conditions:}
-All boards should run at 30 Hz, and the static boards will all be tested in both day and night conditions.\newline
-I - empty board\newline
-II - a board with a small number of pieces\newline
-III - a mostly full board\newline
-IV - a full game played between two humans\newline
-V - a full game played between a human and a computer\newline
+I - Test that an empty board appears\newline
+II - Test that a board substantially full of pieces appears\newline
+III - Test that a visualization of influence is plausible\newline
+IV - Test that the visualization of territory is accurate\newline
+V - Test that the sun moves correctly and that lights come on at night.\newline
+VI - Test that pieces correctly cast shadows.\newline
+VII - Test that a game played between two humans runs at 30 fps on an RPI-issued T410\newline
+VIII - Test that a game played between a human and the AI runs at 30 fps on an RPI-issued T410.\newline
 
 \bibliographystyle{alpha}
-\bibliography{GraphicsProposal.bib}
+\bibliography{GraphicsProposal}
 \end{document}
