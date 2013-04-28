@@ -184,7 +184,6 @@ void Mesh::SetupMesh(triangleshashtype &triSet, GLuint VBO, std::vector<VBOPosNo
     VBO_verts_vector.push_back(VBOPosNormal(c,nc));
   }
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  std::cout<<numTriangles(triSet)<<"\n";
   glBufferData(GL_ARRAY_BUFFER,
          sizeof(VBOPosNormal) * numTriangles(triSet) * 3,
          &VBO_verts_vector[0],
@@ -464,7 +463,7 @@ char *makeDemoBoard() {
     demoBoard = (char*) malloc(81);
     for (int x = 0; x < 9; x++) {
       for (int y = 0; y < 9; y++) {
-        demoBoard[x*9+y] = (x+y)%3;
+        demoBoard[x*9+y] = (x+y)%3-1;
       }
     }
   }
@@ -479,9 +478,9 @@ void Mesh::DrawPieces(char *flat_board) {
   for (int x = 0; x < 9; x++) {
     for (int y = 0; y < 9; y++) {
       char space = flat_board[x*9+y];
-      std::cout<<int(space)<<", ("<<x<<", "<<y<<")\n";
-      if (space != 2) {
-        glColor3f(space, space, space);
+      if (space != 0) {
+        float color = (space + 1) / 2 + 0.2;
+        glColor3f(color, color, color);
         DrawMesh(piece, piece_tri_verts_VBO);
       }
       glTranslatef(0, 0, 10.0f/9);
@@ -543,10 +542,11 @@ void Mesh::drawVBOs() {
     if (args->glsl_enabled) {
         glUseProgramObjectARB(GLCanvas::program);
     }
+    glColor3b(GLbyte(240-127), GLbyte(184-127), GLbyte(0-127));
     DrawMesh(board, board_tri_verts_VBO);
     DrawPieces(makeDemoBoard());
     if (args->glsl_enabled) {
-glUseProgramObjectARB(0);
+      glUseProgramObjectARB(0);
     }
   }
 
