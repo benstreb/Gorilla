@@ -8,6 +8,7 @@
 #include "hash.h"
 #include "boundingbox.h"
 #include "vbo_structs.h"
+#include "GoBoard.h"
 
 class ArgParser;
 class Vertex;

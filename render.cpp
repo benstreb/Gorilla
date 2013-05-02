@@ -169,9 +169,8 @@ char *makeDemoBoard() {
 
 //TODO: Un-demo-ify this.
 void Mesh::DrawPieces(char *flat_board) {
-	/*
-  glTranslatef(0.005f, 1, 0.005f);
-  glScalef(0.1f, 0.03f, 0.1f);
+  glTranslatef(PIECE_OFFSET, BOARD_HEIGHT, PIECE_OFFSET);
+  glScalef(PIECE_X_SCALE, PIECE_Y_SCALE, PIECE_Z_SCALE);
   for (int x = 0; x < 9; x++) {
     for (int y = 0; y < 9; y++) {
       char space = flat_board[x*9+y];
@@ -180,16 +179,14 @@ void Mesh::DrawPieces(char *flat_board) {
         glColor3f(color, color, color);
         DrawMesh(piece, piece_tri_verts_VBO);
       }
-      glTranslatef(0, 0, 10.0f/9);
+      glTranslatef(0, 0, BOARD_GRID_SPACING);
     }
-    glTranslatef(0, 0, -10);
-    glTranslatef(10.0f/9, 0, 0);
+    glTranslatef(0, 0, -BOARD_MAX/PIECE_Z_SCALE);
+    glTranslatef(BOARD_GRID_SPACING, 0, 0);
   }
-  glTranslatef(-10, 0, 0);
-  glScalef(10.0f, 1/0.03f, 10.0f);
-  glTranslatef(-0.005f, -1, -0.005f);
-  */
-  
+  glTranslatef(-BOARD_MAX, 0, 0);
+  glScalef(1/PIECE_X_SCALE, 1/PIECE_Y_SCALE, 1/PIECE_Z_SCALE);
+  glTranslatef(-PIECE_OFFSET, -BOARD_HEIGHT, -PIECE_OFFSET);
   
   /*
   startTranslate(0.005f, 1, 0.005f);
