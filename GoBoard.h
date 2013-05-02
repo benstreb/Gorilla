@@ -1,6 +1,13 @@
 #ifndef _GO_BOARD_H_
 #define _GO_BOARD_H_
 
+#include <utility>
+#include <vector>
+#include <map>
+
+typedef std::pair<int,int> coord;
+typedef std::pair<coord, int> PlacedPieceType;
+
 const int BOARD_SIZE = 8;
 
 const int PLAYER_1 = 1;
@@ -33,6 +40,9 @@ void updateBoard();
 
 int 	pieces[BOARD_SIZE][BOARD_SIZE];
 int		prev_pieces[BOARD_SIZE][BOARD_SIZE];
+
+std::map<coord, int>	placed_pieces;
+
 
 double	control[BOARD_SIZE][BOARD_SIZE];
 

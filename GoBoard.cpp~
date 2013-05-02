@@ -1,12 +1,13 @@
 #include "GoBoard.h"
 
 #include <queue>
+#include <vector>
 #include <utility>
 #include <map>
 #include <math.h>
 #include <iostream>
 
-
+typedef std::pair<int,int> coord;
 typedef std::pair<coord, bool> visitedPair;
 typedef std::pair<coord, float> waveFrontPair;
 typedef std::map<coord, bool> waveFrontType;
@@ -39,9 +40,6 @@ bool GoBoard::placePiece(int player, int x, int y)
 	{
 		pieces[x][y] = player;
 		updateControlMap(player, x, y);
-		int newPieceID = placed_pieces.size();
-		coord newCord = std::make_pair(x,y);
-		placed_pieces.insert(std::make_pair(newCord, newPieceID));
 		return true;
 	}
 	
@@ -139,15 +137,12 @@ void GoBoard::updateControlMap(int player, int x, int y)
 				{
 					result_power += control[next_loc.first][next_loc.second];
 				}
-				if((placed_pieces.find(next_loc)) == placed_pieces.end())
+				control[next_loc.first][next_loc.second] += next_power;
+				
+				if(fabs(result_power) > CONTROL_EPSILON)
 				{
-					control[next_loc.first][next_loc.second] += next_power;
-					
-					if(fabs(result_power) > CONTROL_EPSILON)
-					{
-						waveFront.push(std::make_pair(next_loc,next_power));
-						visited.insert(std::pair<coord,bool>(next_loc, true) );
-					}
+					waveFront.push(std::make_pair(next_loc,next_power));
+					visited.insert(std::pair<coord,bool>(next_loc, true) );
 				}
 			}
 		}

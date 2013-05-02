@@ -6,7 +6,27 @@
 
 #IncludeRegexTransform: 
 
+/home/wrigha3/Gorilla/GoBoard.cpp
+GoBoard.h
 /home/wrigha3/Gorilla/GoBoard.h
+queue
+-
+utility
+-
+map
+-
+math.h
+-
+iostream
+-
+
+/home/wrigha3/Gorilla/GoBoard.h
+utility
+-
+vector
+-
+map
+-
 
 /home/wrigha3/Gorilla/argparser.h
 cstdio
