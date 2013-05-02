@@ -6,6 +6,8 @@
 
 #IncludeRegexTransform: 
 
+/home/wrigha3/Gorilla/GoBoard.h
+
 /home/wrigha3/Gorilla/argparser.h
 cstdio
 -
@@ -127,6 +129,8 @@ argparser.h
 /home/wrigha3/Gorilla/argparser.h
 camera.h
 /home/wrigha3/Gorilla/camera.h
+GoBoard.h
+/home/wrigha3/Gorilla/GoBoard.h
 
 /home/wrigha3/Gorilla/triangle.h
 boundingbox.h

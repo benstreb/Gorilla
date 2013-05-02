@@ -13,7 +13,6 @@ add_executable(go
   matrix.cpp
   load_shaders.cpp
   boundingbox.cpp
-  GoBoard.cpp
   argparser.h
   camera.h
   glCanvas.h

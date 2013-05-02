@@ -28,6 +28,7 @@ public:
   ~Mesh();
   int LoadBoard(std::string fileName, int vertexcount);
   int LoadPiece(std::string fileName, int vertexcount);
+  int LoadRect(std::string fileName, int vertexcount);
   void ComputeGouraudNormals();
 
   void initializeVBOs(); 
@@ -91,6 +92,7 @@ private:
   void DrawLight();
   void DrawMirror();
   void DrawFloor();
+  void DrawControlMap();
   void DrawMesh(triangleshashtype &triSet, GLuint VBO);
   
   //TODO: Un-demo-ify this.
@@ -112,13 +114,16 @@ private:
   std::vector<Vertex*> vertices;
   edgeshashtype board_edges;
   edgeshashtype piece_edges;
+  edgeshashtype control_map_edges;
   triangleshashtype board;
   triangleshashtype piece;
+  triangleshashtype control_map;
   BoundingBox bbox;
 
   // VBOs
   GLuint board_tri_verts_VBO;
   GLuint piece_tri_verts_VBO;
+  GLuint control_map_tri_verts_VBO;
   //GLuint reflected_mesh_tri_verts_VBO;
   GLuint shadow_polygon_quad_verts_VBO;
   GLuint light_vert_VBO;
@@ -132,6 +137,7 @@ private:
 
   std::vector<VBOPosNormal> board_tri_verts;
   std::vector<VBOPosNormal> piece_tri_verts;
+  std::vector<VBOPosNormal> control_map_tri_verts;
   //std::vector<VBOPosNormal> reflected_mesh_tri_verts; 
   std::vector<VBOPos> shadow_polygon_quad_verts;
   std::vector<VBOPos> light_vert;

@@ -5,6 +5,7 @@
 #include "triangle.h"
 #include "argparser.h"
 #include "camera.h"
+#include "GoBoard.h"
 
 Vec3f floor_color(0.9,0.8,0.7);
 Vec3f mesh_color(1,1,1);
@@ -36,6 +37,7 @@ Vec3f Mesh::LightPosition() {
 void Mesh::initializeVBOs() {
   glGenBuffers(1,&board_tri_verts_VBO);
   glGenBuffers(1,&piece_tri_verts_VBO);
+  glGenBuffers(1,&control_map_tri_verts_VBO);
   //glGenBuffers(1,&reflected_mesh_tri_verts_VBO);
   glGenBuffers(1,&light_vert_VBO);
   glGenBuffers(1,&floor_quad_verts_VBO);
@@ -45,6 +47,7 @@ void Mesh::initializeVBOs() {
 void Mesh::cleanupVBOs() {
   glDeleteBuffers(1,&board_tri_verts_VBO);
   glDeleteBuffers(1,&piece_tri_verts_VBO);
+  glDeleteBuffers(1,&control_map_tri_verts_VBO);
   //glDeleteBuffers(1,&reflected_mesh_tri_verts_VBO);
   glDeleteBuffers(1,&light_vert_VBO);
   glDeleteBuffers(1,&floor_quad_verts_VBO);
@@ -201,11 +204,62 @@ void Mesh::DrawPieces(char *flat_board) {
  
 }
 
+void Mesh::DrawControlMap()
+{
+	//TODO: Undemo-ify this
+	GoBoard board;
+	board.placePiece(PLAYER_1, 2, 2);
+	board.placePiece(PLAYER_2, 5, 5);
+	board.placePiece(PLAYER_1, 2, 5);
+	board.placePiece(PLAYER_2, 5, 2);
+	//
+	
+	glTranslatef(0.005f, 1, 0.005f);
+	glScalef(0.1f, 0.05f, 0.1f);
+	for(int i = 0; i < BOARD_SIZE; ++i)
+	{
+		for(int j = 0; j < BOARD_SIZE; ++j)
+		{
+			float cntrl = board.getControl(j,i);
+			if(cntrl < 0)
+			{
+				if(cntrl < -1)
+				{
+					cntrl = -1;
+				}
+				glColor3f(cntrl*-1, 0, 0);
+			}
+			else if(cntrl > 0)
+			{
+				if(cntrl > 1)
+				{
+					cntrl = 1;
+				}
+				glColor3f(0, 0, cntrl);
+			}
+			else
+			{
+				glColor3f(0, 0, 0);
+			}
+			DrawMesh(control_map, control_map_tri_verts_VBO);
+			glTranslatef(0, 0, 10.0f/9);
+		}	
+		glTranslatef(0, 0, -10);
+		glTranslatef(10.0f/9, 0, 0);
+	}
+	
+	glTranslatef(-10, 0, 0);
+	glScalef(10.0f, 1.0/0.05f, 10.0f);
+	glTranslatef(-0.005f, -1, -0.005f);
+	
+}
+
 // ======================================================================================
 // ======================================================================================
 
 void Mesh::setupVBOs() {
   // delete all the old geometry
+  control_map_tri_verts.clear();
   board_tri_verts.clear();
   piece_tri_verts.clear();
   light_vert.clear();
@@ -215,6 +269,7 @@ void Mesh::setupVBOs() {
   Vec3f light_position = LightPosition();
   //SetupLight(light_position);
   SetupFloor();
+  SetupMesh(control_map, control_map_tri_verts_VBO, control_map_tri_verts);
   SetupMesh(board, board_tri_verts_VBO, board_tri_verts);
   SetupMesh(piece, piece_tri_verts_VBO, piece_tri_verts);
   bbox.setupVBOs();
@@ -381,7 +436,12 @@ void Mesh::drawVBOs() {
 		glColor3b(GLbyte(240-127), GLbyte(184-127), GLbyte(0-127));
 
 		DrawMesh(board, board_tri_verts_VBO);
+		if(args->board_control)
+		{
+			DrawControlMap();
+		}
 		DrawPieces(makeDemoBoard());
+
 	}
   
 

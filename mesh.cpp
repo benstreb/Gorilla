@@ -128,6 +128,9 @@ int Mesh::LoadBoard(std::string input_file, int prior_vert_count) {
 int Mesh::LoadPiece(std::string input_file, int prior_vert_count) {
   return Mesh::Load(piece, piece_edges, input_file, prior_vert_count);
 }
+int Mesh::LoadRect(std::string input_file, int prior_vert_count) {
+  return Mesh::Load(control_map, control_map_edges, input_file, prior_vert_count);
+}
 
 int Mesh::Load(triangleshashtype &triSet, edgeshashtype &edgeSet, std::string input_file, int prior_vert_count) {
   std::cout<<prior_vert_count<<", "<<numVertices()<<"\n";
