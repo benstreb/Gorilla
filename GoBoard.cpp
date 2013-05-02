@@ -1,5 +1,6 @@
 #include "GoBoard.h"
 
+#include <queue>
 #include <vector>
 #include <utility>
 #include <map>
@@ -8,6 +9,7 @@
 
 typedef std::pair<int,int> coord;
 typedef std::pair<coord, bool> visitedPair;
+typedef std::pair<coord, float> waveFrontPair;
 typedef std::map<coord, bool> waveFrontType;
 
 const double CONTROL_EPSILON = .1;
@@ -85,7 +87,7 @@ void GoBoard::printBoard()
 //Helper
 void GoBoard::updateControlMap(int player, int x, int y)
 {
-	std::vector<coord> waveFront;
+	std::queue<waveFrontPair> waveFront;
 	waveFrontType visited;
 
 	control[x][y] += 1.0*player;
@@ -95,16 +97,18 @@ void GoBoard::updateControlMap(int player, int x, int y)
 	}
 	
 	coord here = std::make_pair(x,y);
+	waveFrontPair firstEnergy = std::make_pair(here,1.0*player);
 	
-	waveFront.push_back(here);
+	waveFront.push(firstEnergy);
 	visited.insert(std::pair<coord,bool>(here, true) );
 	
 	while(!waveFront.empty())
 	{
-		coord next = waveFront.back();
-		waveFront.pop_back();
+		waveFrontPair newest = waveFront.front();
+		coord next = newest.first;
+		waveFront.pop();
 		
-		double current_power = control[next.first][next.second];
+		double current_power = newest.second;
 		double next_power = current_power/2.0;
 		
 		coord up = std::make_pair(next.first, next.second-1);
@@ -137,7 +141,7 @@ void GoBoard::updateControlMap(int player, int x, int y)
 				
 				if(fabs(result_power) > CONTROL_EPSILON)
 				{
-					waveFront.push_back(next_loc);
+					waveFront.push(std::make_pair(next_loc,next_power));
 					visited.insert(std::pair<coord,bool>(next_loc, true) );
 				}
 			}
