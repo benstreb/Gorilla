@@ -13,7 +13,7 @@ typedef std::map<coord, bool> waveFrontType;
 const double CONTROL_EPSILON = .1;
 
 
-GoBoard::GoBoard(){
+GoBoard::GoBoard() {
 	for(int j = 0; j<BOARD_SIZE; ++j)
 	{
 		for(int i = 0; i < BOARD_SIZE; ++i)
@@ -32,7 +32,7 @@ GoBoard::~GoBoard(){}
 
 
 //Modifers
-bool GoBoard::placePiece(int player, int x, int y)
+bool GoBoard::placePiece(int x, int y, int player)
 {
 	if(legalMove(player, x, y))
 	{

@@ -95,7 +95,7 @@ private:
   void DrawMesh(triangleshashtype &triSet, GLuint VBO);
   
   //TODO: Un-demo-ify this.
-  void DrawPieces(char *flat_board);
+  void DrawPieces(const GoBoard &flat_board);
   //void DrawReflectedMesh();
   //void DrawReflectedFloor();
   void DrawSilhouetteEdges();

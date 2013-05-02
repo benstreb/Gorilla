@@ -151,29 +151,29 @@ void Mesh::DrawMesh(triangleshashtype &triSet, GLuint VBO) {
 
 
 //TODO: REALLY, REALLY Un-demo-ify this.
-char *demoBoard;
+GoBoard *demoBoard;
 bool initialized = false;
-char *makeDemoBoard() {
+GoBoard &makeDemoBoard() {
   if (!initialized) {
     initialized = true;
-    demoBoard = (char*) malloc(81);
+    demoBoard = new GoBoard();
     for (int x = 0; x < 9; x++) {
       for (int y = 0; y < 9; y++) {
-        demoBoard[x*9+y] = (x+y)%3-1;
+        demoBoard->placePiece(x, y, (x+y)%3-1);
       }
     }
   }
-  return demoBoard;
+  return *demoBoard;
 }
 
 
 //TODO: Un-demo-ify this.
-void Mesh::DrawPieces(char *flat_board) {
+void Mesh::DrawPieces(const GoBoard &board) {
   glTranslatef(PIECE_OFFSET, BOARD_HEIGHT, PIECE_OFFSET);
   glScalef(PIECE_X_SCALE, PIECE_Y_SCALE, PIECE_Z_SCALE);
   for (int x = 0; x < 9; x++) {
     for (int y = 0; y < 9; y++) {
-      char space = flat_board[x*9+y];
+      char space = board.getPiece(x, y);
       if (space != 0) {
         float color = (space + 1) / 2 + 0.2;
         glColor3f(color, color, color);
