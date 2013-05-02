@@ -36,7 +36,7 @@ void GLCanvas::InitLight() {
   // Set the last component of the position to 0 to indicate
   // a directional light source
 
-  GLfloat position[4] = { 30.0f,30.0f,100.0f,1.0f};
+  GLfloat position[4] = { 60.0f,60.0f,200.0f,1.0f};
   GLfloat diffuse[4] = { 0.7f,0.7f,0.7f,1.0f};
   GLfloat specular[4] = { 0.0f,0.0f,0.0f,1.0f};
   GLfloat ambient[4] = { 0.3f, 0.3f, 0.3f, 1.0f };
@@ -51,13 +51,7 @@ void GLCanvas::InitLight() {
   glLightfv(GL_LIGHT1, GL_SPECULAR, specular);
   glLightfv(GL_LIGHT1, GL_AMBIENT, zero);
   glEnable(GL_LIGHT1);
-  if (args->two_lights) {
-    glLightfv(GL_LIGHT2, GL_POSITION, position);
-    glLightfv(GL_LIGHT2, GL_DIFFUSE, diffuse);
-    glLightfv(GL_LIGHT2, GL_SPECULAR, specular);
-    glLightfv(GL_LIGHT2, GL_AMBIENT, zero);
-    glEnable(GL_LIGHT2);
-  }
+
   glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
   glEnable(GL_COLOR_MATERIAL);
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient);
@@ -284,8 +278,15 @@ void GLCanvas::keyboard(unsigned char key, int /*x*/, int /*y*/) {
 	InitShaders();
 	args->glsl_initialized = true;
       }
-      LoadCompileLinkShaders();
+      mesh->generateShadowFBO();
+      mesh->shadowMapUniform = LoadCompileLinkShaders();
     }
+    else
+    {
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+		glClearColor(0,0,0,1.0f);
+	}
     mesh->setupVBOs();
     break;
   case 'l' : case 'L':
@@ -314,10 +315,11 @@ void GLCanvas::keyboard(unsigned char key, int /*x*/, int /*y*/) {
 void GLCanvas::initialize(ArgParser *_args, Mesh *_mesh) {
   args = _args;
   mesh = _mesh;
-  Vec3f camera_position = Vec3f(0,0,5);
+  Vec3f camera_position = Vec3f(0,0,20);
   Vec3f point_of_interest = Vec3f(0,0,0);
   Vec3f up = Vec3f(0,1,0);
   camera = new PerspectiveCamera(camera_position, point_of_interest, up, 20 * M_PI/180.0);
+  mesh->camera = camera;
   // Set window parameters
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGB | GLUT_STENCIL );
   glutInitWindowSize(args->width, args->height);
@@ -360,7 +362,7 @@ void GLCanvas::initialize(ArgParser *_args, Mesh *_mesh) {
   glutDisplayFunc(display);
   glutReshapeFunc(reshape);
   glutKeyboardFunc(keyboard);
-  glutIdleFunc(idle);
+  glutIdleFunc(display);
 
   mesh->initializeVBOs();
   mesh->setupVBOs();

@@ -82,15 +82,16 @@ void GLCanvas::InitShaders() {
   HandleGLError("Failed to attach shaders to program");
 }
 
-void GLCanvas::LoadCompileLinkShaders() {
+GLuint GLCanvas::LoadCompileLinkShaders() {
   std::cout << "load, compile, & link shaders" << std::endl;
-  std::string v_string = ReadFile(args->vertex_shader_filename);
+  std::string v_string = ReadFile("shadows.vs");
   char *v = (char*) v_string.c_str();
-  std::string f_string = ReadFile(args->fragment_shader_filename);
+  std::string f_string = ReadFile("shadows.fs");
   char *f = (char*) f_string.c_str();
   CompileProgram(v, &vertex_shader);
   CompileProgram(f, &fragment_shader);
   LinkProgram(program);
   HandleGLError("Failed to compile or link shaders");
+  return glGetUniformLocationARB(program,"ShadowMap");
 }
 

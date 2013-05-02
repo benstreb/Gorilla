@@ -3,6 +3,7 @@
 #include "vertex.h"
 #include "triangle.h"
 #include "argparser.h"
+#include "camera.h"
 
 int Triangle::next_triangle_id = 0;
 

@@ -23,6 +23,9 @@ public:
   void truckCamera(double dx, double dy);
   void rotateCamera(double rx, double ry);
   friend std::ostream& operator<<(std::ostream &ostr, const Camera &c);
+  
+  Vec3f point_of_interest;
+  Vec3f camera_position;
 
 protected:
   Camera() { assert(0); } // don't use
@@ -43,8 +46,7 @@ protected:
     return answer; }
 
   // REPRESENTATION
-  Vec3f point_of_interest;
-  Vec3f camera_position;
+
   Vec3f up;
   int width;
   int height;

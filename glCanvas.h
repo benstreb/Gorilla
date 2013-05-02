@@ -54,7 +54,7 @@ private:
 
   static void InitLight();
   static void InitShaders();
-  static void LoadCompileLinkShaders();
+  static GLuint LoadCompileLinkShaders();
 
   // various static variables
   static ArgParser *args;

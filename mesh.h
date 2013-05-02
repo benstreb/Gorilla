@@ -13,6 +13,7 @@ class ArgParser;
 class Vertex;
 class Edge;
 class Triangle;
+class Camera;
 
 // ======================================================================
 // ======================================================================
@@ -63,6 +64,14 @@ public:
   // OTHER ACCESSORS
   const BoundingBox& getBoundingBox() const { return bbox; }
   Vec3f LightPosition();
+  
+  //===Shadow map fun
+  void generateShadowFBO();
+  
+  GLuint shadowMapUniform;
+  Camera* camera;
+  
+  
 
 private:
   int Load(triangleshashtype &triSet, edgeshashtype &edgeSet, std::string fileName, int vertexcount);
@@ -90,6 +99,12 @@ private:
   //void DrawReflectedFloor();
   void DrawSilhouetteEdges();
   void DrawShadowPolygons();
+  
+  //=======Shadow Map Fun
+  void setupMatrices(float position_x,float position_y,float position_z,float lookAt_x,float lookAt_y,float lookAt_z);
+  void setTextureMatrix(void);
+  void startTranslate(float x,float y,float z);
+  void endTranslate();
 
   // ==============
   // REPRESENTATION
@@ -111,6 +126,9 @@ private:
   GLuint floor_quad_verts_VBO;
   GLuint reflected_floor_quad_verts_VBO;
   GLuint silhouette_edge_verts_VBO;
+  
+  GLuint depthTextureId;
+  GLuint fboId;
 
   std::vector<VBOPosNormal> board_tri_verts;
   std::vector<VBOPosNormal> piece_tri_verts;
