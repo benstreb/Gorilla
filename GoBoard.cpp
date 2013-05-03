@@ -25,6 +25,7 @@ GoBoard::GoBoard(){
 		{
 			pieces[i][j] = 0;
 			prev_pieces[i][j]=0;
+			prev2_pieces[i][j]=0;
 			control[i][j] = 0;
 		}
 		std::cout << std::endl;
@@ -39,6 +40,16 @@ GoBoard::~GoBoard(){}
 //Modifers
 bool GoBoard::placePiece(int player, int x, int y)
 {
+	int temp[BOARD_SIZE][BOARD_SIZE];	
+	for(int i = 0; i < BOARD_SIZE; ++i)
+	{
+		for(int j = 0; j < BOARD_SIZE; ++j)
+		{
+			temp[i][j] = prev_pieces[i][j];
+		}
+	}
+	updatePrevBoard();
+	
 	if(legalMove(player, x, y))
 	{
 		pieces[x][y] = player;
@@ -54,6 +65,38 @@ bool GoBoard::placePiece(int player, int x, int y)
 		if( num_dead_enemies > 0)
 		{
 			removePieces(*dead_enemy_pieces);
+			if(num_dead_enemies == 1)
+			{
+				//std::cout << "Check for Ko!!!!!!!!!!!!!!!!!: " << std::endl;
+				//check for KO
+				bool is_ko = true;
+				for(int i = 0; i < BOARD_SIZE; ++i)
+				{
+					for(int j = 0; j < BOARD_SIZE; ++j)
+					{
+						if(pieces[i][j] != temp[i][j])
+						{
+							is_ko = false;
+						}
+					}
+				}
+				if(is_ko)
+				{
+					//std::cout << "THIS IS Ko!!!!!!!!!!!!!!!!!: " << std::endl;
+					//ROLLBACK
+					removePiece(x,y);
+					addPieces(*dead_enemy_pieces, player*-1);	
+					for(int i = 0; i < BOARD_SIZE; ++i)
+					{
+						for(int j = 0; j < BOARD_SIZE; ++j)
+						{
+							prev_pieces[i][j] = temp[i][j];
+						}
+					}
+					delete dead_enemy_pieces;
+					return false;
+				}
+			}
 		}
 		else
 		{
@@ -64,17 +107,58 @@ bool GoBoard::placePiece(int player, int x, int y)
 			//If suicidal move
 			if( num_dead_ally > 0)
 			{
-				removePiece(x,y);
+				//rollback
+				removePiece(x,y);		
+				for(int i = 0; i < BOARD_SIZE; ++i)
+				{
+					for(int j = 0; j < BOARD_SIZE; ++j)
+					{
+						prev_pieces[i][j] = temp[i][j];
+					}
+				}
+				delete dead_enemy_pieces;
 				return false;
 			}
 			//else was a legal move
 			updateControlMap(player, x, y);
 		}
 		delete dead_enemy_pieces;
+		
+		//update the prevprev board
+		for(int i = 0; i < BOARD_SIZE; ++i)
+		{
+			for(int j = 0; j < BOARD_SIZE; ++j)
+			{
+				prev2_pieces[i][j] = temp[i][j];
+			}
+		}
 		return true;
 	}
 	
+	//rollback
+	for(int i = 0; i < BOARD_SIZE; ++i)
+	{
+		for(int j = 0; j < BOARD_SIZE; ++j)
+		{
+			prev_pieces[i][j] = temp[i][j];
+		}
+	}
+	
 	return false;
+}
+
+bool GoBoard::addPieces(std::vector<coord>& toAdd, int player)
+{
+	//add pieces back to the control board
+	for( std::vector<coord>::iterator iter = toAdd.begin(); iter!=toAdd.end(); iter++)
+	{
+		if(!placePiece(player,iter->first,iter->second))
+		{
+			std::cout << "ERROR ADDING PIECES";
+			return false;
+		}
+	}
+	return true;
 }
 
 bool GoBoard::removePieces(std::vector<coord>& toRemove)
@@ -98,8 +182,8 @@ bool GoBoard::removePieces(std::vector<coord>& toRemove)
 		coord place = itr->first;
 		updateControlMap(player,place.first, place.second);
 		
-		std::cout << "=======================" << std::endl; 
-		printControl();
+		//std::cout << "=======================" << std::endl; 
+		//printControl();
 	}
 	return true;
 }
@@ -158,6 +242,30 @@ void GoBoard::printBoard()
 		for(int i = 0; i < BOARD_SIZE; ++i)
 		{
 			std::cout << pieces[i][j] << "\t";
+		}
+		std::cout << std::endl;
+	}
+}
+
+void GoBoard::printPrevBoard()
+{
+	for(int j = 0; j<BOARD_SIZE; ++j)
+	{
+		for(int i = 0; i < BOARD_SIZE; ++i)
+		{
+			std::cout << prev_pieces[i][j] << "\t";
+		}
+		std::cout << std::endl;
+	}
+}
+
+void GoBoard::printPrev2Board()
+{
+	for(int j = 0; j<BOARD_SIZE; ++j)
+	{
+		for(int i = 0; i < BOARD_SIZE; ++i)
+		{
+			std::cout << prev2_pieces[i][j] << "\t";
 		}
 		std::cout << std::endl;
 	}
@@ -229,6 +337,31 @@ void GoBoard::updateControlMap(int player, int x, int y)
 			}
 		}
 	}
+}
+
+void GoBoard::updatePrevBoard(){
+	for(int i = 0; i < BOARD_SIZE; ++i)
+	{
+		for(int j = 0; j < BOARD_SIZE; ++j)
+		{
+			prev_pieces[i][j] = pieces[i][j];
+		}
+	}
+}
+
+bool GoBoard::isKo()
+{
+	for(int i = 0; i < BOARD_SIZE; ++i)
+	{
+		for(int j = 0; j < BOARD_SIZE; ++j)
+		{
+			if(pieces[i][j] != prev2_pieces[i][j])
+			{
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 void GoBoard::eraseControlMap(){
