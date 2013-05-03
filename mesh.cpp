@@ -14,7 +14,7 @@ int Triangle::next_triangle_id = 0;
 Mesh::~Mesh() {
   // delete all the triangles
   std::vector<Triangle*> todo;
-  for (auto iter = board.begin(); iter != board.end(); iter++) {
+  for (auto iter = table.begin(); iter != table.end(); iter++) {
     Triangle *t = iter->second;
     todo.push_back(t);
   }
@@ -101,7 +101,7 @@ void Mesh::removeTriangle(edgeshashtype &edgeSet, Triangle *t) {
   edgeSet.erase(std::make_pair(a,b)); 
   edgeSet.erase(std::make_pair(b,c)); 
   edgeSet.erase(std::make_pair(c,a)); 
-  board.erase(t->getID());
+  table.erase(t->getID());
   piece.erase(t->getID());
   // clean up memory
   delete ea;
@@ -123,7 +123,7 @@ Edge* Mesh::getMeshEdge(edgeshashtype edgeSet, Vertex *a, Vertex *b) const {
 // =======================================================================
 
 int Mesh::LoadBoard(std::string input_file, int prior_vert_count) {
-  return Mesh::Load(board, board_edges, input_file, prior_vert_count);
+  return Mesh::Load(table, board_edges, input_file, prior_vert_count);
 }
 int Mesh::LoadPiece(std::string input_file, int prior_vert_count) {
   return Mesh::Load(piece, piece_edges, input_file, prior_vert_count);
@@ -222,7 +222,7 @@ void Mesh::ComputeGouraudNormals() {
     getVertex(i)->clearGouraudNormal();
   }
   // loop through all the triangles incrementing the normal at each vertex
-  for (auto iter = board.begin(); iter != board.end(); iter++) {
+  for (auto iter = table.begin(); iter != table.end(); iter++) {
     Triangle *t = iter->second;
     doGouraud(t);
   }

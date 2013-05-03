@@ -9,6 +9,7 @@
 
 #include "mesh.h"
 #include "argparser.h"
+#include "matrix.h"
 
 #ifndef M_PI
 #define M_PI 3.14159
@@ -23,7 +24,7 @@ int GLCanvas::mouseY;
 //int GLCanvas::display_list_index;
 ArgParser* GLCanvas::args;
 Mesh* GLCanvas::mesh;
-Camera* GLCanvas::camera;
+PerspectiveCamera* GLCanvas::camera;
 bool GLCanvas::controlPressed;
 bool GLCanvas::animate;
 GLhandleARB GLCanvas::program;
@@ -150,6 +151,53 @@ void GLCanvas::motion(int x, int y) {
 
   // Redraw the scene with the new camera parameters
   glutPostRedisplay();
+}
+
+Matrix fromVec3fs(const Vec3f &a, const Vec3f &b, const Vec3f &c) {
+  Matrix m;
+  for (int i = 0; i < 3; i++) {
+    m.set(0, i, a[i]);
+    m.set(1, i, b[i]);
+    m.set(2, i, c[i]);
+  }
+    m.set(3, 3, 1);
+  return m;
+}
+
+void GLCanvas::mouseRay(int mouseX, int mouseY) {
+  auto square_hit = std::make_pair(-1, -1);
+  Vec3f camPos = camera->camera_position;
+
+
+  Vec3f screenCenter = camPos - camera->getDirection();
+  double screenHeight = 2 * tan(camera->getAngle()/2.0);
+  Vec3f xAxis = camera->getHorizontal() * screenHeight;
+  Vec3f yAxis = camera->getScreenUp() * screenHeight;
+  Vec3f lowerLeft = screenCenter - 0.5*xAxis - 0.5*yAxis;
+  Vec3f screenPoint = lowerLeft + float(mouseX)/args->width * xAxis + float(mouseY)/args->height * yAxis;
+  Vec3f dir = camPos - screenPoint;
+  Vec3f modDir = dir;
+  modDir /= dir.y();
+  modDir *= camPos.y() - 1;
+
+  Vec3f t = camPos - modDir;
+  /*glTranslatef(t.x() - .4*dir.x(), t.y() - .4*dir.y(), t.z() - .4*dir.z());
+  float color = 0.0;
+  for (int i = 0; i < 10; i++) {
+    glColor3f(color, color, color);
+    glTranslatef(-.1*dir.x(), -.1*dir.y(), -.1*dir.z());
+    glutSolidSphere(1, 5, 5);
+    color += 0.1;
+  }
+  glTranslatef(-t.x() - .6*dir.x(), -t.y() - .6*dir.y(), -t.z() - .6*dir.z());*/
+
+  Vec3f intersection = (camPos - modDir)*10;
+
+  square_hit = std::make_pair(-int(floor(intersection[0])), int(floor(intersection[2])));
+  printf("%d, %d\n", square_hit.first, square_hit.second);
+
+  mesh->editBoard().placeSpeculativePiece(1, square_hit.first, square_hit.second);
+  //printf("%f, %f, %f\n", a[0], a[1], a[2]);
 }
 
 // =============================================================
@@ -359,6 +407,7 @@ void GLCanvas::initialize(ArgParser *_args, Mesh *_mesh) {
   // Initialize callback functions
   glutMouseFunc(mouse);
   glutMotionFunc(motion);
+  glutPassiveMotionFunc(mouseRay);
   glutDisplayFunc(display);
   glutReshapeFunc(reshape);
   glutKeyboardFunc(keyboard);

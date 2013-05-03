@@ -22,7 +22,6 @@ class Camera;
 class Mesh {
 
 public:
-
   // ========================
   // CONSTRUCTOR & DESTRUCTOR
   Mesh(ArgParser *_args) { args = _args; }
@@ -71,6 +70,11 @@ public:
   
   GLuint shadowMapUniform;
   Camera* camera;
+
+  // ========
+  // Go Board
+  const GoBoard &getBoard() { return board; }
+  GoBoard &editBoard() { return board; }
   
   
 
@@ -113,9 +117,10 @@ private:
   std::vector<Vertex*> vertices;
   edgeshashtype board_edges;
   edgeshashtype piece_edges;
-  triangleshashtype board;
+  triangleshashtype table;
   triangleshashtype piece;
   BoundingBox bbox;
+  GoBoard board;
 
   // VBOs
   GLuint board_tri_verts_VBO;

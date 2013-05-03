@@ -1,10 +1,10 @@
 #include "GoBoard.h"
 
 #include <vector>
-#include <utility>
 #include <map>
 #include <math.h>
 #include <iostream>
+#include <assert.h>
 
 typedef std::pair<int,int> coord;
 typedef std::pair<coord, bool> visitedPair;
@@ -32,9 +32,10 @@ GoBoard::~GoBoard(){}
 
 
 //Modifers
-bool GoBoard::placePiece(int x, int y, int player)
+bool GoBoard::placePiece(int player, int x, int y)
 {
-	if(legalMove(player, x, y))
+	assert(player == -1 || player == 0 || player == 1);
+	if(player != 0 && legalMove(x, y, player))
 	{
 		pieces[x][y] = player;
 		updateControlMap(player, x, y);
@@ -46,8 +47,10 @@ bool GoBoard::placePiece(int x, int y, int player)
 
 //Misc
 bool GoBoard::legalMove(int player, int x, int y)
-{	
-	if(x >= 0
+{
+	assert(player == -1 || player == 0 || player == 1);
+	if(player != 0
+		&& x >= 0
 		&& x < BOARD_SIZE
 		&& y >= 0
 		&& y < BOARD_SIZE
@@ -85,6 +88,7 @@ void GoBoard::printBoard()
 //Helper
 void GoBoard::updateControlMap(int player, int x, int y)
 {
+	assert (player == -1 || player == 0 || player == 1);
 	std::vector<coord> waveFront;
 	waveFrontType visited;
 
@@ -143,4 +147,14 @@ void GoBoard::updateControlMap(int player, int x, int y)
 			}
 		}
 	}
+}
+
+std::pair<std::pair<int, int>, int> GoBoard::getSpeculativePiece() const {
+	return speculativePiece;
+}
+
+void GoBoard::placeSpeculativePiece(int player, int x, int y) {
+	if (player == 0) return;
+	assert(player == -1 || player == 1);
+	speculativePiece = std::make_pair(std::make_pair(x, y), player);
 }

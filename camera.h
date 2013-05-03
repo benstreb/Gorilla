@@ -27,9 +27,6 @@ public:
   Vec3f point_of_interest;
   Vec3f camera_position;
 
-protected:
-  Camera() { assert(0); } // don't use
-
   // HELPER FUNCTIONS
   Vec3f getHorizontal() const {
     Vec3f answer;
@@ -44,6 +41,9 @@ protected:
     Vec3f answer = point_of_interest - camera_position;
     answer.Normalize();
     return answer; }
+
+protected:
+  Camera() { assert(0); } // don't use
 
   // REPRESENTATION
 
@@ -91,6 +91,8 @@ public:
   void zoomCamera(double dist);
   friend std::ostream& operator<<(std::ostream &ostr, const PerspectiveCamera &c);
   friend std::istream& operator>>(std::istream &istr, PerspectiveCamera &c);
+
+  double getAngle() { return angle; }
   
 private:
 

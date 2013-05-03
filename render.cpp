@@ -159,9 +159,10 @@ GoBoard &makeDemoBoard() {
     demoBoard = new GoBoard();
     for (int x = 0; x < 9; x++) {
       for (int y = 0; y < 9; y++) {
-        demoBoard->placePiece(x, y, (x+y)%3-1);
+        demoBoard->placePiece((x+y)%3-1, x, y);
       }
     }
+    demoBoard->placeSpeculativePiece(-1, 8, 8);
   }
   return *demoBoard;
 }
@@ -184,17 +185,16 @@ void Mesh::DrawPieces(const GoBoard &board) {
     glTranslatef(0, 0, -BOARD_MAX/PIECE_Z_SCALE);
     glTranslatef(BOARD_GRID_SPACING, 0, 0);
   }
-  glTranslatef(-BOARD_MAX, 0, 0);
-  glScalef(1/PIECE_X_SCALE, 1/PIECE_Y_SCALE, 1/PIECE_Z_SCALE);
-  glTranslatef(-PIECE_OFFSET, -BOARD_HEIGHT, -PIECE_OFFSET);
-  
-  /*
-  startTranslate(0.005f, 1, 0.005f);
-	glColor3f(.7, .7, 7.);
-	glScalef(0.1f, 0.03f, 0.1f);
-	DrawMesh(piece, piece_tri_verts_VBO);
-  endTranslate();
-  */
+  glTranslatef(-BOARD_MAX/PIECE_X_SCALE, 0, 0);
+
+  auto sP = board.getSpeculativePiece();
+  if (sP.second != 0) {
+    glTranslatef(BOARD_GRID_SPACING*sP.first.first, 0, BOARD_GRID_SPACING*sP.first.second);
+    float color = (sP.second + 1) / 2 + 0.2;
+    glColor3f(color, 0, color);
+    DrawMesh(piece, piece_tri_verts_VBO);
+  }
+  //endTranslate();
  
 }
 
@@ -212,7 +212,7 @@ void Mesh::setupVBOs() {
   Vec3f light_position = LightPosition();
   //SetupLight(light_position);
   SetupFloor();
-  SetupMesh(board, board_tri_verts_VBO, board_tri_verts);
+  SetupMesh(table, board_tri_verts_VBO, board_tri_verts);
   SetupMesh(piece, piece_tri_verts_VBO, piece_tri_verts);
   bbox.setupVBOs();
 }
@@ -283,8 +283,8 @@ void Mesh::drawVBOs() {
 		InsertColor(mesh_color);
 		glUseProgramObjectARB(GLCanvas::program);
 		glColor3b(GLbyte(240-127), GLbyte(184-127), GLbyte(0-127));
-		DrawMesh(board, board_tri_verts_VBO);
-		DrawPieces(makeDemoBoard());
+		DrawMesh(table, board_tri_verts_VBO);
+		DrawPieces(getBoard());
 		*/
 		glUseProgramObjectARB(0);
 		
@@ -335,8 +335,8 @@ void Mesh::drawVBOs() {
 		InsertColor(mesh_color);
 		glUseProgramObjectARB(GLCanvas::program);
 		glColor3b(GLbyte(240-127), GLbyte(184-127), GLbyte(0-127));
-		DrawMesh(board, board_tri_verts_VBO);
-		DrawPieces(makeDemoBoard());
+		DrawMesh(table, board_tri_verts_VBO);
+		DrawPieces(getBoard());
 		*/
 		glUseProgramObjectARB(0);
 		
@@ -377,8 +377,8 @@ void Mesh::drawVBOs() {
 		InsertColor(mesh_color);
 		glColor3b(GLbyte(240-127), GLbyte(184-127), GLbyte(0-127));
 
-		DrawMesh(board, board_tri_verts_VBO);
-		DrawPieces(makeDemoBoard());
+		DrawMesh(table, board_tri_verts_VBO);
+                DrawPieces(getBoard());
 	}
   
 

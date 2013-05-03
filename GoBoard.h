@@ -1,6 +1,8 @@
 #ifndef _GO_BOARD_H_
 #define _GO_BOARD_H_
 
+#include <utility>
+
 const int BOARD_SIZE = 9;
 
 const int PLAYER_1 = 1;
@@ -26,13 +28,16 @@ public:
   double getControl(int x, int y) const {return control[x][y];}
 
   //Modifiers 
-  bool placePiece(int x, int y, int player);
+  bool placePiece(int player, int x, int y);
 
   //Misc
   bool legalMove(int player, int x, int y);
 
   void printControl();
   void printBoard();
+
+  std::pair<std::pair<int, int>, int> getSpeculativePiece() const;
+  void placeSpeculativePiece(int player, int x, int y);
 
   //Helper
 private:
@@ -43,6 +48,8 @@ private:
   int prev_pieces[BOARD_SIZE][BOARD_SIZE];
 
   double control[BOARD_SIZE][BOARD_SIZE];
+
+  std::pair<std::pair<int, int>, int> speculativePiece;
 
 };
 

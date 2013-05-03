@@ -35,11 +35,13 @@
 class ArgParser;
 class IFS;
 class Mesh;
-class Camera;
+class PerspectiveCamera;
 
 // ====================================================================
 // NOTE:  All the methods and variables of this class are static
 // ====================================================================
+
+const float EPSILON = 0.05f;
 
 class GLCanvas {
 
@@ -59,7 +61,7 @@ private:
   // various static variables
   static ArgParser *args;
   static Mesh *mesh;
-  static Camera* camera;
+  static PerspectiveCamera *camera;
   static int display_list_index;
   // state of the mouse cursor
   static int mouseButton;
@@ -72,6 +74,7 @@ private:
   static void reshape(int w, int h);
   static void mouse(int button, int state, int x, int y);
   static void motion(int x, int y);
+  static void mouseRay(int x, int y);
   static void keyboard(unsigned char key, int x, int y);
   static void idle();
 
