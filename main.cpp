@@ -15,7 +15,8 @@ int main(int argc, char *argv[]) {
   //int i = mesh->LoadBoard("NBoard.obj", 0);
   //mesh->LoadPiece("NPiece.obj", i);
   int i = mesh->LoadBoard("Cube.obj", 0);
-  mesh->LoadPiece("Sphere.obj", i);
+  i = mesh->LoadPiece("Sphere.obj", i);
+  mesh->LoadRect("Cube.obj", i);
   mesh->ComputeGouraudNormals();
 
   glutInit(&argc,argv);

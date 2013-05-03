@@ -279,6 +279,10 @@ void GLCanvas::idle() {
 
 void GLCanvas::keyboard(unsigned char key, int /*x*/, int /*y*/) {
   switch (key) {
+  case 'c': case 'C':
+	args->board_control = !args->board_control;
+	mesh->setupVBOs();
+	break;
   case 'b': case 'B':
     args->bounding_box = !args->bounding_box;
     mesh->setupVBOs();

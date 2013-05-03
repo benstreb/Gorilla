@@ -8,6 +8,7 @@ FILE(REMOVE_RECURSE
   "CMakeFiles/go.dir/matrix.cpp.o"
   "CMakeFiles/go.dir/load_shaders.cpp.o"
   "CMakeFiles/go.dir/boundingbox.cpp.o"
+  "CMakeFiles/go.dir/GoBoard.cpp.o"
   "go.pdb"
   "go"
 )

@@ -108,6 +108,30 @@ go/fast:
 	$(MAKE) -f CMakeFiles/go.dir/build.make CMakeFiles/go.dir/build
 .PHONY : go/fast
 
+GoBoard.o: GoBoard.cpp.o
+.PHONY : GoBoard.o
+
+# target to build an object file
+GoBoard.cpp.o:
+	$(MAKE) -f CMakeFiles/go.dir/build.make CMakeFiles/go.dir/GoBoard.cpp.o
+.PHONY : GoBoard.cpp.o
+
+GoBoard.i: GoBoard.cpp.i
+.PHONY : GoBoard.i
+
+# target to preprocess a source file
+GoBoard.cpp.i:
+	$(MAKE) -f CMakeFiles/go.dir/build.make CMakeFiles/go.dir/GoBoard.cpp.i
+.PHONY : GoBoard.cpp.i
+
+GoBoard.s: GoBoard.cpp.s
+.PHONY : GoBoard.s
+
+# target to generate assembly for a file
+GoBoard.cpp.s:
+	$(MAKE) -f CMakeFiles/go.dir/build.make CMakeFiles/go.dir/GoBoard.cpp.s
+.PHONY : GoBoard.cpp.s
+
 boundingbox.o: boundingbox.cpp.o
 .PHONY : boundingbox.o
 
@@ -333,6 +357,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... go"
 	@echo "... rebuild_cache"
+	@echo "... GoBoard.o"
+	@echo "... GoBoard.i"
+	@echo "... GoBoard.s"
 	@echo "... boundingbox.o"
 	@echo "... boundingbox.i"
 	@echo "... boundingbox.s"

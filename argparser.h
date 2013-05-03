@@ -70,6 +70,7 @@ public:
   std::string vertex_shader_filename;
   int width;
   int height;
+  bool board_control;
   bool shadow;
   bool mirror;
   bool geometry;
