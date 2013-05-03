@@ -212,8 +212,8 @@ bool GoBoard::removePiece(int x, int y)
 		{
 			return false;
 		}
+		placed_pieces_player.erase(piece->second);
 		placed_pieces.erase(piece->first);
-		placed_pieces_player.erase(piece->second);	
 		return true;
 	}
 }
@@ -575,14 +575,7 @@ bool GoBoard::applySpeculativePiece()
 	bool success = placePiece(turn, speculativePiece.first.first, speculativePiece.first.second);
 	if (success)
 	{
-		if (turn == -1)
-		{
-			turn = 1;
-		}
-		else
-		{
-			turn = -1;
-		}
+		turn *= -1;
 	}
 	return success;
 }

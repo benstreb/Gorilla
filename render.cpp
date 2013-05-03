@@ -201,21 +201,13 @@ void Mesh::DrawPieces(const GoBoard &board) {
 
 void Mesh::DrawControlMap()
 {
-	//TODO: Undemo-ify this
-	GoBoard board;
-	board.placePiece(PLAYER_1, 2, 2);
-	board.placePiece(PLAYER_2, 5, 5);
-	board.placePiece(PLAYER_1, 2, 5);
-	board.placePiece(PLAYER_2, 5, 2);
-	//
-	
 	glTranslatef(0.005f, 1, 0.005f);
-	glScalef(0.1f, 0.05f, 0.1f);
+	glScalef(0.1f, 0.005f, 0.1f);
 	for(int i = 0; i < BOARD_SIZE; ++i)
 	{
 		for(int j = 0; j < BOARD_SIZE; ++j)
 		{
-			float cntrl = board.getControl(j,i);
+			float cntrl = board.getControl(i,j);
 			if(cntrl < 0)
 			{
 				if(cntrl < -1)
@@ -236,7 +228,7 @@ void Mesh::DrawControlMap()
 			{
 				glColor3f(0, 0, 0);
 			}
-			DrawMesh(control_map, control_map_tri_verts_VBO);
+                        DrawMesh(table, board_tri_verts_VBO);// control_map_tri_verts_VBO);
 			glTranslatef(0, 0, 10.0f/9);
 		}	
 		glTranslatef(0, 0, -10);
@@ -244,7 +236,7 @@ void Mesh::DrawControlMap()
 	}
 	
 	glTranslatef(-10, 0, 0);
-	glScalef(10.0f, 1.0/0.05f, 10.0f);
+	glScalef(10.0f, 1.0/0.005f, 10.0f);
 	glTranslatef(-0.005f, -1, -0.005f);
 	
 }

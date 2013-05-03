@@ -369,7 +369,7 @@ void GLCanvas::keyboard(unsigned char key, int /*x*/, int /*y*/) {
 void GLCanvas::initialize(ArgParser *_args, Mesh *_mesh) {
   args = _args;
   mesh = _mesh;
-  Vec3f camera_position = Vec3f(0,0,20);
+  Vec3f camera_position = Vec3f(0,10,10);
   Vec3f point_of_interest = Vec3f(0,0,0);
   Vec3f up = Vec3f(0,1,0);
   camera = new PerspectiveCamera(camera_position, point_of_interest, up, 20 * M_PI/180.0);
