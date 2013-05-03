@@ -33,10 +33,15 @@ bool addPieces(std::vector<coord>& toAdd, int player);
 //Misc
 bool legalMove(int player, int x, int y);
 
+int getPlayerScore(int player);
+
 void printControl();
 void printBoard();
 void printPrevBoard();
 void printPrev2Board();
+void printScoreBoard();
+
+void endOfGame();
 
 //Helper
 private:
@@ -44,6 +49,9 @@ void updateControlMap(int player, int x, int y);
 void eraseControlMap();
 void updateBoard();
 void updatePrevBoard();
+
+void fillLine(coord start, coord dir);
+void calculateScores();
 
 bool isKo();
 
@@ -56,8 +64,12 @@ int getPlayerAtCoord(coord place);
 int 	pieces[BOARD_SIZE][BOARD_SIZE];
 int		prev_pieces[BOARD_SIZE][BOARD_SIZE];
 int		prev2_pieces[BOARD_SIZE][BOARD_SIZE];
+int 	score_board[BOARD_SIZE][BOARD_SIZE];
 
 int nextPieceID;
+
+int player1_score;
+int player2_score;
 
 std::map<coord, int>	placed_pieces;
 std::map<int, int> placed_pieces_player;

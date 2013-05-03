@@ -27,9 +27,13 @@ GoBoard::GoBoard(){
 			prev_pieces[i][j]=0;
 			prev2_pieces[i][j]=0;
 			control[i][j] = 0;
+			score_board[i][j] = 0;
 		}
 		std::cout << std::endl;
 	}
+	
+	player1_score = -1;
+	player2_score = -1;
 }
 
 GoBoard::~GoBoard(){}
@@ -209,6 +213,20 @@ bool GoBoard::removePiece(int x, int y)
 	return false;
 }
 
+int GoBoard::getPlayerScore(int player)
+{
+	if(player == 1)
+	{
+		return player1_score;
+	}
+	else if(player == -1)
+	{
+		return player2_score;
+	}
+	std::cout << "Invalid Player" << std::endl;
+	return -2;
+}
+
 //Misc
 bool GoBoard::legalMove(int player, int x, int y)
 {	
@@ -271,7 +289,66 @@ void GoBoard::printPrev2Board()
 	}
 }
 
+void GoBoard::printScoreBoard()
+{
+	std::cout << "SCORE BOARD" << std::endl;
+	for(int j = 0; j<BOARD_SIZE; ++j)
+	{
+		for(int i = 0; i < BOARD_SIZE; ++i)
+		{
+			std::cout << score_board[i][j] << "\t";
+		}
+		std::cout << std::endl;
+	}
+}
+
+void GoBoard::endOfGame()
+{
+	calculateScores();
+}
+
 //Helper
+
+void GoBoard::calculateScores()
+{
+	for(std::map<coord,int>::iterator itr = placed_pieces.begin();
+							itr != placed_pieces.end();
+							itr++)
+	{
+		coord next = itr->first;
+		
+		coord up = std::make_pair(next.first, next.second-1);
+		coord down = std::make_pair(next.first, next.second+1);
+		coord right = std::make_pair(next.first+1, next.second);
+		coord left = std::make_pair(next.first-1, next.second);
+		
+		fillLine(itr->first, up);
+		fillLine(itr->first, right);
+		fillLine(itr->first, down);
+		fillLine(itr->first, left);
+	}
+	
+	player1_score = 0;
+	player2_score = 0;
+	
+	for(int i = 0; i < BOARD_SIZE; ++i)
+	{
+		for(int j = 0; j < BOARD_SIZE; ++j)
+		{
+			if(score_board[i][j] <= -1)
+			{
+				player2_score += 1;
+			}
+			else if(score_board[i][j] >= 1)
+			{
+				player1_score += 1;
+			}
+		}
+	}
+	
+	printScoreBoard();
+}
+
 void GoBoard::updateControlMap(int player, int x, int y)
 {
 	std::queue<waveFrontPair> waveFront;
@@ -345,6 +422,34 @@ void GoBoard::updatePrevBoard(){
 		for(int j = 0; j < BOARD_SIZE; ++j)
 		{
 			prev_pieces[i][j] = pieces[i][j];
+		}
+	}
+}
+
+void GoBoard::fillLine(coord start, coord dir)
+{
+	coord current = start;
+	int player = getPlayerAtCoord(start);
+	
+	std::cout << player;
+	
+	while(placed_pieces.find(current) == placed_pieces.end())
+	{
+		int x = current.first;
+		int y = current.second;
+		
+		if(x >= 0
+		&& x < BOARD_SIZE
+		&& y >= 0
+		&& y < BOARD_SIZE)
+		{
+			score_board[x][y] += player;
+			current.first += dir.first;
+			current.second += dir.second;
+		}
+		else
+		{
+			break;
 		}
 	}
 }
