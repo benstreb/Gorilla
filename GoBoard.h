@@ -39,7 +39,6 @@ bool placePiece(int player, int x, int y);
 //Misc
 bool legalMove(int player, int x, int y);
 //Modifiers 
-bool placePiece(int player, int x, int y);
 bool removePiece(int x, int y);
 bool removePieces(std::vector<coord>& toRemove);
 bool addPieces(std::vector<coord>& toAdd, int player);
@@ -48,11 +47,10 @@ void printControl();
 void printBoard();
 
 std::pair<std::pair<int, int>, int> getSpeculativePiece() const;
+bool applySpeculativePiece();
 void placeSpeculativePiece(int player, int x, int y);
 int getPlayerScore(int player);
 
-void printControl();
-void printBoard();
 void printPrevBoard();
 void printPrev2Board();
 void printScoreBoard();
@@ -87,8 +85,12 @@ int nextPieceID;
 int player1_score;
 int player2_score;
 
+int turn;
+
 std::map<coord, int>	placed_pieces;
 std::map<int, int> placed_pieces_player;
+
+double control[BOARD_SIZE][BOARD_SIZE];
 
 std::pair<std::pair<int, int>, int> speculativePiece;
 

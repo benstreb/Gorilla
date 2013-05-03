@@ -435,7 +435,7 @@ void Mesh::drawVBOs() {
 		{
 			DrawControlMap();
 		}
-		DrawPieces(makeDemoBoard());
+                DrawPieces(getBoard());
 	}
   
 

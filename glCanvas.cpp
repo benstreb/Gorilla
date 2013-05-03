@@ -116,6 +116,8 @@ void GLCanvas::mouse(int button, int /*state*/, int x, int y) {
   mouseX = x;
   mouseY = y;
   controlPressed = (glutGetModifiers() & GLUT_ACTIVE_CTRL) != 0;
+  
+  mouseButton == GLUT_LEFT_BUTTON && !mesh->editBoard().applySpeculativePiece();
 }
 
 // ========================================================

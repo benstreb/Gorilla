@@ -21,6 +21,7 @@ const double CONTROL_EPSILON = .1;
 
 GoBoard::GoBoard()
 {
+	turn = -1;
 	nextPieceID = 0;
 	for(int j = 0; j<BOARD_SIZE; ++j)
 	{
@@ -32,7 +33,7 @@ GoBoard::GoBoard()
 			control[i][j] = 0;
 			score_board[i][j] = 0;
 		}
-		std::cout << std::endl;
+		//std::cout << std::endl;
 	}
 	
 	player1_score = -1;
@@ -215,7 +216,6 @@ bool GoBoard::removePiece(int x, int y)
 		placed_pieces_player.erase(piece->second);	
 		return true;
 	}
-	return false;
 }
 
 int GoBoard::getPlayerScore(int player)
@@ -565,11 +565,29 @@ int GoBoard::getPlayerAtCoord(coord place)
 	return(placed_pieces_player.find(placed_pieces.find(place)->second)->second);
 }
 
-std::pair<std::pair<int, int>, int> GoBoard::getSpeculativePiece() const {
+std::pair<std::pair<int, int>, int> GoBoard::getSpeculativePiece() const
+{
 	return speculativePiece;
 }
 
-void GoBoard::placeSpeculativePiece(int player, int x, int y) {
+bool GoBoard::applySpeculativePiece()
+{
+	bool success = placePiece(turn, speculativePiece.first.first, speculativePiece.first.second);
+	if (success)
+	{
+		if (turn == -1)
+		{
+			turn = 1;
+		}
+		else
+		{
+			turn = -1;
+		}
+	}
+	return success;
+}
+void GoBoard::placeSpeculativePiece(int player, int x, int y)
+{
 	if (player == 0) return;
 	assert(player == -1 || player == 1);
 	speculativePiece = std::make_pair(std::make_pair(x, y), player);
