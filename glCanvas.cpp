@@ -117,7 +117,21 @@ void GLCanvas::mouse(int button, int /*state*/, int x, int y) {
   mouseY = y;
   controlPressed = (glutGetModifiers() & GLUT_ACTIVE_CTRL) != 0;
   
-  mouseButton == GLUT_LEFT_BUTTON && !mesh->editBoard().applySpeculativePiece();
+  //mouseButton == GLUT_LEFT_BUTTON && !mesh->editBoard().applySpeculativePiece();
+  
+  bool success = mesh->editBoard().applySpeculativePiece();
+  mouseButton = GLUT_LEFT_BUTTON && !success;
+  
+  if(success)
+  {
+	  if(args->using_ai)
+	  {
+		  GoBoard* theBoard = &(mesh->editBoard());
+		  coord ai_move = args->theAI->getMove(theBoard);
+		  theBoard->placePiece(theBoard->getTurn(), ai_move.first, ai_move.second);
+		  theBoard->passTurn();
+	  }
+  }
 }
 
 // ========================================================

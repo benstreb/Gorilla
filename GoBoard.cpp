@@ -40,7 +40,36 @@ GoBoard::GoBoard()
 	player2_score = -1;
 }
 
+GoBoard::GoBoard( const GoBoard& other )
+{
+	for(int i = 0; i < BOARD_SIZE; ++i)
+	{
+		for(int j = 0; j < BOARD_SIZE; ++j)
+		{
+			pieces[i][j] = other.pieces[i][j];
+			prev_pieces[i][j] = other.prev_pieces[i][j];
+			prev2_pieces[i][j] = other.prev2_pieces[i][j];
+			score_board[i][j] = other.score_board[i][j];
+			control[i][j] = other.control[i][j];
+		}
+	}
+	
+	nextPieceID = other.nextPieceID;
+	player1_score = other.player1_score;
+	player2_score = other.player2_score;
+	turn = other.turn;
+	
+	placed_pieces = other.placed_pieces;
+	placed_pieces = other.placed_pieces;
+	
+	placed_pieces_player = other.placed_pieces_player;
+	
+	speculativePiece = other.speculativePiece;
+}
+
 GoBoard::~GoBoard(){}
+
+
 
 //Accessors
 

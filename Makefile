@@ -132,6 +132,30 @@ GoBoard.cpp.s:
 	$(MAKE) -f CMakeFiles/go.dir/build.make CMakeFiles/go.dir/GoBoard.cpp.s
 .PHONY : GoBoard.cpp.s
 
+ai_random.o: ai_random.cpp.o
+.PHONY : ai_random.o
+
+# target to build an object file
+ai_random.cpp.o:
+	$(MAKE) -f CMakeFiles/go.dir/build.make CMakeFiles/go.dir/ai_random.cpp.o
+.PHONY : ai_random.cpp.o
+
+ai_random.i: ai_random.cpp.i
+.PHONY : ai_random.i
+
+# target to preprocess a source file
+ai_random.cpp.i:
+	$(MAKE) -f CMakeFiles/go.dir/build.make CMakeFiles/go.dir/ai_random.cpp.i
+.PHONY : ai_random.cpp.i
+
+ai_random.s: ai_random.cpp.s
+.PHONY : ai_random.s
+
+# target to generate assembly for a file
+ai_random.cpp.s:
+	$(MAKE) -f CMakeFiles/go.dir/build.make CMakeFiles/go.dir/ai_random.cpp.s
+.PHONY : ai_random.cpp.s
+
 boundingbox.o: boundingbox.cpp.o
 .PHONY : boundingbox.o
 
@@ -360,6 +384,9 @@ help:
 	@echo "... GoBoard.o"
 	@echo "... GoBoard.i"
 	@echo "... GoBoard.s"
+	@echo "... ai_random.o"
+	@echo "... ai_random.i"
+	@echo "... ai_random.s"
 	@echo "... boundingbox.o"
 	@echo "... boundingbox.i"
 	@echo "... boundingbox.s"

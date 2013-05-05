@@ -27,14 +27,17 @@ class GoBoard {
 public:
 
 GoBoard();
+GoBoard( const GoBoard& other );
 ~GoBoard();
 
 //Accessors
+int getTurn(){return turn;}
 int getPiece(int x, int y) const {return pieces[x][y];}
 double getControl(int x, int y) const {return control[x][y];}
 
 //Modifiers 
 bool placePiece(int player, int x, int y);
+void passTurn(){turn *= -1;}
 
 //Misc
 bool legalMove(int player, int x, int y);

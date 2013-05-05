@@ -14,7 +14,6 @@ add_executable(go
   load_shaders.cpp
   boundingbox.cpp
   GoBoard.cpp
-  ai_random.cpp
   argparser.h
   camera.h
   glCanvas.h
@@ -28,8 +27,6 @@ add_executable(go
   vectors.h
   vbo_structs.h
   GoBoard.h
-  ai.h
-  ai_random.h
 )
 
 # platform specific compiler flags to output all compiler warnings

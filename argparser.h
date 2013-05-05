@@ -7,6 +7,9 @@
 #include <cstring>
 #include <string>
 
+#include "ai.h"
+#include "ai_random.h"
+
 class ArgParser {
 
 public:
@@ -34,6 +37,9 @@ public:
 	width = height = atoi(argv[i]);
       } else if (!strcmp(argv[i],"-2lights")) {
 	two_lights = true;;
+      } else if (!strcmp(argv[i],"-ai_random")) {
+		theAI = new AI_Random(-1);
+		using_ai = true;
       } else {
 	printf ("whoops error with command line argument %d: '%s'\n",i,argv[i]);
 	assert(0);
@@ -59,6 +65,7 @@ public:
     glsl_initialized = false;
     two_lights = false;
     timer = 0.0;
+    using_ai = false;
   }
 
   // ==============
@@ -82,7 +89,10 @@ public:
   bool glsl_enabled;
   bool glsl_initialized;
   bool two_lights;
+  bool using_ai;
   float timer;
+  
+  AI* theAI;
 };
 
 #endif
