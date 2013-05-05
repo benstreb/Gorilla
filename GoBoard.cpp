@@ -72,6 +72,30 @@ GoBoard::~GoBoard(){}
 
 
 //Accessors
+double GoBoard::getBoardStateForPlayer(int player){
+	double total = 0;
+	for(int i = 0; i < BOARD_SIZE; ++i)
+	{
+		for(int j = 0; j < BOARD_SIZE; ++j)
+		{
+			double value = control[i][j];
+			//std::cout << "Value: " << value << " Player: " << player << std::endl;
+			if(value * (double)player >= 0)
+			{
+				//std::cout << "!=========adding: " <<  fabs(value) << std::endl;
+				total += fabs(value);
+			}
+			else
+			{
+				//std::cout << "subtracting: " <<  fabs(value) << std::endl;
+				total-= fabs(value);
+			}
+			//std::cout << "current score: " << score << std::endl;
+		}
+	}
+	
+	return total;	
+}
 
 
 //Modifers

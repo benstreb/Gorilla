@@ -6,24 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/home/wrigha3/Gorilla/GoBoard.cpp
-GoBoard.h
-/home/wrigha3/Gorilla/GoBoard.h
-vector
--
-queue
--
-utility
--
-map
--
-math.h
--
-iostream
--
-assert.h
--
-
 /home/wrigha3/Gorilla/GoBoard.h
 utility
 -
@@ -35,20 +17,6 @@ map
 /home/wrigha3/Gorilla/ai.h
 GoBoard.h
 /home/wrigha3/Gorilla/GoBoard.h
-
-/home/wrigha3/Gorilla/ai_random.cpp
-ai_random.h
-/home/wrigha3/Gorilla/ai_random.h
-vector
--
-map
--
-utility
--
-iostream
--
-time.h
--
 
 /home/wrigha3/Gorilla/ai_random.h
 ai.h
@@ -87,14 +55,6 @@ fstream
 -
 vectors.h
 /home/wrigha3/Gorilla/vectors.h
-
-/home/wrigha3/Gorilla/edge.h
-climits
--
-cstdio
--
-cassert
--
 
 /home/wrigha3/Gorilla/glCanvas.cpp
 glCanvas.h
@@ -164,30 +124,6 @@ ext/hash_map
 vertex.h
 /home/wrigha3/Gorilla/vertex.h
 
-/home/wrigha3/Gorilla/load_shaders.cpp
-glCanvas.h
-/home/wrigha3/Gorilla/glCanvas.h
-iostream
--
-fstream
--
-argparser.h
-/home/wrigha3/Gorilla/argparser.h
-
-/home/wrigha3/Gorilla/main.cpp
-glCanvas.h
-/home/wrigha3/Gorilla/glCanvas.h
-iostream
--
-ctime
--
-cstdlib
--
-argparser.h
-/home/wrigha3/Gorilla/argparser.h
-mesh.h
-/home/wrigha3/Gorilla/mesh.h
-
 /home/wrigha3/Gorilla/matrix.h
 cmath
 -
@@ -195,20 +131,6 @@ cassert
 -
 vectors.h
 /home/wrigha3/Gorilla/vectors.h
-
-/home/wrigha3/Gorilla/mesh.cpp
-mesh.h
-/home/wrigha3/Gorilla/mesh.h
-edge.h
-/home/wrigha3/Gorilla/edge.h
-vertex.h
-/home/wrigha3/Gorilla/vertex.h
-triangle.h
-/home/wrigha3/Gorilla/triangle.h
-argparser.h
-/home/wrigha3/Gorilla/argparser.h
-camera.h
-/home/wrigha3/Gorilla/camera.h
 
 /home/wrigha3/Gorilla/mesh.h
 glCanvas.h
@@ -227,30 +149,6 @@ vbo_structs.h
 /home/wrigha3/Gorilla/vbo_structs.h
 GoBoard.h
 /home/wrigha3/Gorilla/GoBoard.h
-
-/home/wrigha3/Gorilla/render.cpp
-glCanvas.h
-/home/wrigha3/Gorilla/glCanvas.h
-mesh.h
-/home/wrigha3/Gorilla/mesh.h
-edge.h
-/home/wrigha3/Gorilla/edge.h
-vertex.h
-/home/wrigha3/Gorilla/vertex.h
-triangle.h
-/home/wrigha3/Gorilla/triangle.h
-argparser.h
-/home/wrigha3/Gorilla/argparser.h
-camera.h
-/home/wrigha3/Gorilla/camera.h
-GoBoard.h
-/home/wrigha3/Gorilla/GoBoard.h
-
-/home/wrigha3/Gorilla/triangle.h
-boundingbox.h
-/home/wrigha3/Gorilla/boundingbox.h
-edge.h
-/home/wrigha3/Gorilla/edge.h
 
 /home/wrigha3/Gorilla/vbo_structs.h
 

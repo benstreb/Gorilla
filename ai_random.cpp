@@ -28,11 +28,17 @@ coord AI_Random::getMove(GoBoard* board)
 		x = rand() % BOARD_SIZE;
 		y = rand() % BOARD_SIZE;
 		
-		std::cout << "PLAYER: " << player << " TRYING: " << x << ", " << y << std::endl;
+		//std::cout << "PLAYER: " << player << " TRYING: " << x << ", " << y << std::endl;
 		
-		success = testBoard.placePiece(player, x, y);	
+		success = testBoard.placePiece(player, x, y);
+		/*
+		if(success)
+		{
+			std::cout << "Value for AI: " << testBoard.getBoardStateForPlayer(player) << std::endl;	
+		}
+		*/
+		
 	}
-	
 	return std::make_pair(x,y);
 }
 

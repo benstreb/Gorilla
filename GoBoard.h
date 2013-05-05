@@ -34,6 +34,7 @@ GoBoard( const GoBoard& other );
 int getTurn(){return turn;}
 int getPiece(int x, int y) const {return pieces[x][y];}
 double getControl(int x, int y) const {return control[x][y];}
+double getBoardStateForPlayer(int player);
 
 //Modifiers 
 bool placePiece(int player, int x, int y);

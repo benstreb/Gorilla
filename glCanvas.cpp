@@ -125,10 +125,14 @@ void GLCanvas::mouse(int button, int /*state*/, int x, int y) {
   if(success)
   {
 	  if(args->using_ai)
-	  {
+	  {	
 		  GoBoard* theBoard = &(mesh->editBoard());
+		  //theBoard->printControl();
+		  //std::cout << "Player is: " << theBoard->getTurn()*-1 << std::endl;
+		  std::cout << "Value for Player: " << theBoard->getBoardStateForPlayer(theBoard->getTurn()*-1) << std::endl;
 		  coord ai_move = args->theAI->getMove(theBoard);
 		  theBoard->placePiece(theBoard->getTurn(), ai_move.first, ai_move.second);
+		  std::cout << "Value for AI: " << theBoard->getBoardStateForPlayer(theBoard->getTurn()) << std::endl;
 		  theBoard->passTurn();
 	  }
   }
@@ -210,7 +214,7 @@ void GLCanvas::mouseRay(int mouseX, int mouseY) {
   Vec3f intersection = (camPos - modDir)*10;
 
   square_hit = std::make_pair(-int(floor(intersection[0])), int(floor(intersection[2])));
-  printf("%d, %d\n", square_hit.first, square_hit.second);
+  //printf("%d, %d\n", square_hit.first, square_hit.second);
 
   mesh->editBoard().placeSpeculativePiece(1, square_hit.first, square_hit.second);
   //printf("%f, %f, %f\n", a[0], a[1], a[2]);
