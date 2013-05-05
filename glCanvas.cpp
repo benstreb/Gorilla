@@ -296,9 +296,9 @@ void GLCanvas::idle() {
 void GLCanvas::keyboard(unsigned char key, int /*x*/, int /*y*/) {
   switch (key) {
   case 'c': case 'C':
-	args->board_control = !args->board_control;
-	mesh->setupVBOs();
-	break;
+    args->board_control = !args->board_control;
+    mesh->setupVBOs();
+    break;
   case 'b': case 'B':
     args->bounding_box = !args->bounding_box;
     mesh->setupVBOs();
@@ -312,7 +312,7 @@ void GLCanvas::keyboard(unsigned char key, int /*x*/, int /*y*/) {
     mesh->setupVBOs();
     break;
   case 'r': case 'R':
-    args->reflected_geometry = !args->reflected_geometry;
+    mesh->resetBoard();
     mesh->setupVBOs();
     break;
   case 's': case 'S':
@@ -351,10 +351,11 @@ void GLCanvas::keyboard(unsigned char key, int /*x*/, int /*y*/) {
     }
     else
     {
-		glDisable(GL_CULL_FACE);
-		glDisable(GL_DEPTH_TEST);
-		glClearColor(0,0,0,1.0f);
-	}
+      glDisable(GL_CULL_FACE);
+      glDisable(GL_STENCIL_TEST);
+      glDisable(GL_DEPTH_TEST);
+      glClearColor(0,0,0,1.0f);
+    }
     mesh->setupVBOs();
     break;
   case 'l' : case 'L':
