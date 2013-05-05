@@ -74,6 +74,7 @@ public:
 
   // ========
   // Go Board
+  void resetBoard() { board = GoBoard(); }
   const GoBoard &getBoard() { return board; }
   GoBoard &editBoard() { return board; }
   
@@ -101,7 +102,7 @@ private:
   void DrawMesh(triangleshashtype &triSet, GLuint VBO);
   
   //TODO: Un-demo-ify this.
-  void DrawPieces(const GoBoard &flat_board);
+  void DrawPieces(GoBoard &flat_board);
   //void DrawReflectedMesh();
   //void DrawReflectedFloor();
   void DrawSilhouetteEdges();

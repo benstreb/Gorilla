@@ -170,9 +170,10 @@ GoBoard &makeDemoBoard() {
 }
 
 
-void Mesh::DrawPieces(const GoBoard &board) {
+void Mesh::DrawPieces(GoBoard &board) {
   glTranslatef(PIECE_OFFSET, BOARD_HEIGHT, PIECE_OFFSET);
   glScalef(PIECE_X_SCALE, PIECE_Y_SCALE, PIECE_Z_SCALE);
+  //glTranslatef(0.5f, 0.5f, 0.5f);
   for (int x = 0; x < 9; x++) {
     for (int y = 0; y < 9; y++) {
       char space = board.getPiece(x, y);
@@ -180,6 +181,7 @@ void Mesh::DrawPieces(const GoBoard &board) {
         float color = (space + 1) / 2 + 0.2;
         glColor3f(color, color, color);
         DrawMesh(piece, piece_tri_verts_VBO);
+        //glutSolidSphere(0.5, 10, 10);
       }
       glTranslatef(0, 0, BOARD_GRID_SPACING);
     }
@@ -189,12 +191,13 @@ void Mesh::DrawPieces(const GoBoard &board) {
   glTranslatef(-BOARD_MAX/PIECE_X_SCALE, 0, 0);
 
   auto sP = board.getSpeculativePiece();
-  if (sP.second != 0) {
-    glTranslatef(BOARD_GRID_SPACING*sP.first.first, 0, BOARD_GRID_SPACING*sP.first.second);
-    float color = (sP.second + 1) / 2 + 0.2;
-    glColor3f(color, 0, color);
-    DrawMesh(piece, piece_tri_verts_VBO);
-  }
+  //if (board.legalMove(sP.second, sP.first.first, sP.first.second)) {
+  glTranslatef(BOARD_GRID_SPACING*sP.first.first, 0, BOARD_GRID_SPACING*sP.first.second);
+  float color = (sP.second + 1) / 2 + 0.2;
+  glColor3f(color, 0, color);
+  //glutSolidSphere(0.5, 10, 10);
+  DrawMesh(piece, piece_tri_verts_VBO);
+  //}
   //endTranslate();
  
 }
@@ -277,158 +280,165 @@ void Mesh::drawVBOs() {
   if (args->glsl_enabled) {
   
   
-	  glEnable(GL_DEPTH_TEST);
-	  glClearColor(0,0,0,1.0f);
-	  glEnable(GL_CULL_FACE);
-	  glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
-	  
-	  //BEGIN SHADOW FUN/////////////===================================
-	  
-	  //First step: Render from the light POV to a FBO, story depth values only
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,fboId);	//Rendering offscreen
-		
-		//Using the fixed pipeline to render to the depthbuffer
-		glUseProgramObjectARB(0);
-			
-		
-		// In the case we render the shadowmap to a higher resolution, the viewport must be modified accordingly.
-		glViewport(0,0,args->width * SHADOW_MAP_RATIO,args->height* SHADOW_MAP_RATIO);
-		
-		// Clear previous frame values
-		glClear( GL_DEPTH_BUFFER_BIT);
-		
-		//Disable color rendering, we only want to write to the Z-Buffer
-		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); 
-		
-		
-		
-		//LIGHT POSITION==========================================================================================
-		/*setupMatrices(float(light_position.x()),float(light_position.y()),float(light_position.z()),
-						10,10,1);*/
-		
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective(45,args->width/args->height,1.0f,1000.0f);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		gluLookAt((float)light_position.x(),(float)light_position.y(),(float)light_position.z(),0,0,0,0,1,0);
-						
-		
-		// Culling switching, rendering only backface, this is done to avoid self-shadowing
-		glCullFace(GL_FRONT);
-		 
-		
-		//===========Draw the Things===================================================================================
-		InsertColor(floor_color);
-		DrawFloor();
-		startTranslate(0,1,0);
-			glutSolidCube(1);
-		endTranslate();
-		/*
-		InsertColor(mesh_color);
-		glUseProgramObjectARB(GLCanvas::program);
-		glColor3b(GLbyte(240-127), GLbyte(184-127), GLbyte(0-127));
-		DrawMesh(table, board_tri_verts_VBO);
-		DrawPieces(getBoard());
-		*/
-		glUseProgramObjectARB(0);
-		
-		//=============================================================================================================
-		
-		//Save modelview/projection matrice into texture7, also add a biais
-		setTextureMatrix();
-		
-		
-		// Now rendering from the camera POV, using the FBO to generate shadows
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,0);
-		
-		glViewport(0,0,args->width,args->height);
-		
-		//Enabling color write (previously disabled for light POV z-buffer rendering)
-		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); 
-		
-		// Clear previous frame values
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		  
-		//Using the shadow shader
-		glUseProgramObjectARB(GLCanvas::program);
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(0,0,0,1.0f);
+    glEnable(GL_CULL_FACE);
+    //glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
+    
+    //BEGIN SHADOW FUN/////////////===================================
+    
+    //First step: Render from the light POV to a FBO, story depth values only
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,fboId);  //Rendering offscreen
+    
+    //Using the fixed pipeline to render to the depthbuffer
+    glUseProgramObjectARB(0);
+      
+    
+    // In the case we render the shadowmap to a higher resolution, the viewport must be modified accordingly.
+    glViewport(0,0,args->width * SHADOW_MAP_RATIO,args->height* SHADOW_MAP_RATIO);
+    
+    // Clear previous frame values
+    glClear(GL_DEPTH_BUFFER_BIT);
+    
+    //Disable color rendering, we only want to write to the Z-Buffer
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); 
+    
+    
+    
+    //LIGHT POSITION==========================================================================================
+    setupMatrices(float(light_position.x()),float(light_position.y()),float(light_position.z()),
+            10,10,1);
+    
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45,args->width/args->height,1.0f,1000.0f);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt((float)light_position.x(),(float)light_position.y(),(float)light_position.z(),0,0,0,0,1,0);
+            
+    
+    // Culling switching, rendering only backface, this is done to avoid self-shadowing
+    glCullFace(GL_FRONT);
+     
+    
+    //===========Draw the Things===================================================================================
+    InsertColor(floor_color);
+    DrawFloor();
+    //startTranslate(0,0,0);
+    //glutSolidCube(1);
+    
+    InsertColor(mesh_color);
+    glUseProgramObjectARB(GLCanvas::program);
+    glColor3b(GLbyte(240-127), GLbyte(184-127), GLbyte(0-127));
+    DrawMesh(table, board_tri_verts_VBO);
+    DrawPieces(editBoard());
 
-		glUniform1iARB(shadowMapUniform,7);
-		glActiveTextureARB(GL_TEXTURE7);
-		glBindTexture(GL_TEXTURE_2D,depthTextureId);
-		
-		Vec3f cam_position = camera->camera_position;
-		Vec3f interest = camera->point_of_interest;
-		
-		//CAMERA MATRIX=======================================================================================================
-		//setupMatrices(cam_pos[0],cam_pos[1],cam_pos[2],interest[0],interest[1],interest[2]);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective(45,args->width/args->height,1.0f,1000.0f);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		gluLookAt((float)cam_position.x(),(float)cam_position.y(),(float)cam_position.z(),(float)interest.x(),(float)interest.y(),(float)interest.z(),0,1,0);
-		
-		glCullFace(GL_BACK);
-		//============================Draw the things
-		InsertColor(floor_color);
-		DrawFloor();
-		startTranslate(0,1,0);
-			glutSolidCube(1);
-		endTranslate();
-		/*
-		InsertColor(mesh_color);
-		glUseProgramObjectARB(GLCanvas::program);
-		glColor3b(GLbyte(240-127), GLbyte(184-127), GLbyte(0-127));
-		DrawMesh(table, board_tri_verts_VBO);
-		DrawPieces(getBoard());
-		*/
-		glUseProgramObjectARB(0);
-		
-		//============================All the things
-		
-		// DEBUG only. this piece of code draw the depth buffer onscreen
-		//*
-		 glUseProgramObjectARB(0);
-	 glMatrixMode(GL_PROJECTION);
-	 glLoadIdentity();
-	 glOrtho(-args->width/2,args->width/2,-args->height/2,args->height/2,1,20);
-	 glMatrixMode(GL_MODELVIEW);
-	 glLoadIdentity();
-	 glColor4f(1,1,1,1);
-	 glActiveTextureARB(GL_TEXTURE0);
-	 glBindTexture(GL_TEXTURE_2D,depthTextureId);
-	 glEnable(GL_TEXTURE_2D);
-	 glTranslated(0,0,-1);
-	 glBegin(GL_QUADS);
-	 glTexCoord2d(0,0);glVertex3f(0,0,0);
-	 glTexCoord2d(1,0);glVertex3f(args->width/2,0,0);
-	 glTexCoord2d(1,1);glVertex3f(args->width/2,args->width/2,0);
-	 glTexCoord2d(0,1);glVertex3f(0,args->height/2,0);
-		 
-		 glEnd();
-		 glDisable(GL_TEXTURE_2D);
-		 //*/
-		
-		glutSwapBuffers();
-	  
+    //endTranslate();
+    
+    glUseProgramObjectARB(0);
+    
+    //=============================================================================================================
+    
+    //Save modelview/projection matrice into texture7, also add a biais
+    setTextureMatrix();
+    
+    
+    // Now rendering from the camera POV, using the FBO to generate shadows
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,0);
+    
+    glViewport(0,0,args->width,args->height);
+    
+    //Enabling color write (previously disabled for light POV z-buffer rendering)
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); 
+    
+    // Clear previous frame values
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      
+    //Using the shadow shader
+    glUseProgramObjectARB(GLCanvas::program);
+
+    glUniform1iARB(shadowMapUniform,7);
+    glActiveTextureARB(GL_TEXTURE7);
+    glBindTexture(GL_TEXTURE_2D,depthTextureId);
+    
+    Vec3f cam_position = camera->camera_position;
+    Vec3f interest = camera->point_of_interest;
+    
+    //CAMERA MATRIX=======================================================================================================
+    //setupMatrices(cam_pos[0],cam_pos[1],cam_pos[2],interest[0],interest[1],interest[2]);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45,args->width/args->height,1.0f,1000.0f);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt((float)cam_position.x(),(float)cam_position.y(),(float)cam_position.z(),(float)interest.x(),(float)interest.y(),(float)interest.z(),0,1,0);
+    
+    glCullFace(GL_BACK);
+    //============================Draw the things
+    InsertColor(floor_color);
+    DrawFloor();
+    //startTranslate(0,0,0);
+    //glutSolidCube(1);
+    
+    InsertColor(mesh_color);
+    glUseProgramObjectARB(GLCanvas::program);
+    glColor3b(GLbyte(240-127), GLbyte(184-127), GLbyte(0-127));
+    DrawMesh(table, board_tri_verts_VBO);
+    DrawPieces(editBoard());
+
+    //endTranslate();
+    
+    glUseProgramObjectARB(0);
+    
+    //============================All the things
+    
+    // DEBUG only. this piece of code draw the depth buffer onscreen
+    //*
+    glUseProgramObjectARB(0);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(-args->width/2,args->width/2,-args->height/2,args->height/2,1,20);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glColor4f(1,1,1,1);
+    glActiveTextureARB(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D,depthTextureId);
+    glEnable(GL_TEXTURE_2D);
+    glTranslated(0,0,-1);
+    glBegin(GL_QUADS);
+    glTexCoord2d(0,0);glVertex3f(0,0,0);
+    glTexCoord2d(1,0);glVertex3f(args->width/2,0,0);
+    glTexCoord2d(1,1);glVertex3f(args->width/2,args->width/2,0);
+    glTexCoord2d(0,1);glVertex3f(0,args->height/2,0);
+     
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    //*/
+    
+    //glutSwapBuffers();
+
+    glDisable(GL_STENCIL_TEST);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glDepthMask(1);
+    
 	  //END SHADOW FUN//////////////////////////////////////////////////
-	}
-	else
-	{
-		InsertColor(floor_color);
-		DrawFloor();
-		
-		InsertColor(mesh_color);
-		glColor3b(GLbyte(240-127), GLbyte(184-127), GLbyte(0-127));
+  }
+  else
+  {
+    InsertColor(floor_color);
+    DrawFloor();
+    
+    InsertColor(mesh_color);
+    glColor3b(GLbyte(240-127), GLbyte(184-127), GLbyte(0-127));
 
-		DrawMesh(table, board_tri_verts_VBO);
-		if(args->board_control)
-		{
-			DrawControlMap();
-		}
-                DrawPieces(getBoard());
-	}
+    DrawMesh(table, board_tri_verts_VBO);
+    if(args->board_control)
+    {
+      DrawControlMap();
+    }
+    DrawPieces(editBoard());
+  }
   
 
   // -------------------------

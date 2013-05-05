@@ -94,7 +94,9 @@ bool GoBoard::placePiece(int player, int x, int y)
 				{
 					//std::cout << "THIS IS Ko!!!!!!!!!!!!!!!!!: " << std::endl;
 					//ROLLBACK
-					removePiece(x,y);
+					auto piece = std::vector<coord>();
+					piece.push_back(coord(x, y));
+					removePieces(piece);
 					addPieces(*dead_enemy_pieces, player*-1);	
 					for(int i = 0; i < BOARD_SIZE; ++i)
 					{
@@ -118,7 +120,9 @@ bool GoBoard::placePiece(int player, int x, int y)
 			if( num_dead_ally > 0)
 			{
 				//rollback
-				removePiece(x,y);		
+				auto piece = std::vector<coord>();
+				piece.push_back(coord(x, y));
+				removePieces(piece);		
 				for(int i = 0; i < BOARD_SIZE; ++i)
 				{
 					for(int j = 0; j < BOARD_SIZE; ++j)
