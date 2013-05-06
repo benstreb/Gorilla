@@ -104,6 +104,7 @@ double AI_Monte_Carlo::evaluateMove(GoBoard* board, int player, coord loc)
 			current_player*=-1;
 		}
 		total_score += testBoard.getBoardStateForPlayer(player);
+		total_score -= testBoard.getBoardStateForPlayer(player*-1);
 	}
 	double avg_score = total_score / (double)games;
 	//std::cout << avg_score;
