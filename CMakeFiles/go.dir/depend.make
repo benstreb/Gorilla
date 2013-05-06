@@ -4,6 +4,11 @@
 CMakeFiles/go.dir/GoBoard.cpp.o: GoBoard.cpp
 CMakeFiles/go.dir/GoBoard.cpp.o: GoBoard.h
 
+CMakeFiles/go.dir/ai_monte_carlo.cpp.o: GoBoard.h
+CMakeFiles/go.dir/ai_monte_carlo.cpp.o: ai.h
+CMakeFiles/go.dir/ai_monte_carlo.cpp.o: ai_monte_carlo.cpp
+CMakeFiles/go.dir/ai_monte_carlo.cpp.o: ai_monte_carlo.h
+
 CMakeFiles/go.dir/ai_random.cpp.o: GoBoard.h
 CMakeFiles/go.dir/ai_random.cpp.o: ai.h
 CMakeFiles/go.dir/ai_random.cpp.o: ai_random.cpp
@@ -28,6 +33,7 @@ CMakeFiles/go.dir/edge.cpp.o: vertex.h
 
 CMakeFiles/go.dir/glCanvas.cpp.o: GoBoard.h
 CMakeFiles/go.dir/glCanvas.cpp.o: ai.h
+CMakeFiles/go.dir/glCanvas.cpp.o: ai_monte_carlo.h
 CMakeFiles/go.dir/glCanvas.cpp.o: ai_random.h
 CMakeFiles/go.dir/glCanvas.cpp.o: argparser.h
 CMakeFiles/go.dir/glCanvas.cpp.o: boundingbox.h
@@ -43,6 +49,7 @@ CMakeFiles/go.dir/glCanvas.cpp.o: vertex.h
 
 CMakeFiles/go.dir/load_shaders.cpp.o: GoBoard.h
 CMakeFiles/go.dir/load_shaders.cpp.o: ai.h
+CMakeFiles/go.dir/load_shaders.cpp.o: ai_monte_carlo.h
 CMakeFiles/go.dir/load_shaders.cpp.o: ai_random.h
 CMakeFiles/go.dir/load_shaders.cpp.o: argparser.h
 CMakeFiles/go.dir/load_shaders.cpp.o: glCanvas.h
@@ -50,6 +57,7 @@ CMakeFiles/go.dir/load_shaders.cpp.o: load_shaders.cpp
 
 CMakeFiles/go.dir/main.cpp.o: GoBoard.h
 CMakeFiles/go.dir/main.cpp.o: ai.h
+CMakeFiles/go.dir/main.cpp.o: ai_monte_carlo.h
 CMakeFiles/go.dir/main.cpp.o: ai_random.h
 CMakeFiles/go.dir/main.cpp.o: argparser.h
 CMakeFiles/go.dir/main.cpp.o: boundingbox.h
@@ -67,6 +75,7 @@ CMakeFiles/go.dir/matrix.cpp.o: vectors.h
 
 CMakeFiles/go.dir/mesh.cpp.o: GoBoard.h
 CMakeFiles/go.dir/mesh.cpp.o: ai.h
+CMakeFiles/go.dir/mesh.cpp.o: ai_monte_carlo.h
 CMakeFiles/go.dir/mesh.cpp.o: ai_random.h
 CMakeFiles/go.dir/mesh.cpp.o: argparser.h
 CMakeFiles/go.dir/mesh.cpp.o: boundingbox.h
@@ -83,6 +92,7 @@ CMakeFiles/go.dir/mesh.cpp.o: vertex.h
 
 CMakeFiles/go.dir/render.cpp.o: GoBoard.h
 CMakeFiles/go.dir/render.cpp.o: ai.h
+CMakeFiles/go.dir/render.cpp.o: ai_monte_carlo.h
 CMakeFiles/go.dir/render.cpp.o: ai_random.h
 CMakeFiles/go.dir/render.cpp.o: argparser.h
 CMakeFiles/go.dir/render.cpp.o: boundingbox.h

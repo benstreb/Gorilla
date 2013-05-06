@@ -132,6 +132,30 @@ GoBoard.cpp.s:
 	$(MAKE) -f CMakeFiles/go.dir/build.make CMakeFiles/go.dir/GoBoard.cpp.s
 .PHONY : GoBoard.cpp.s
 
+ai_monte_carlo.o: ai_monte_carlo.cpp.o
+.PHONY : ai_monte_carlo.o
+
+# target to build an object file
+ai_monte_carlo.cpp.o:
+	$(MAKE) -f CMakeFiles/go.dir/build.make CMakeFiles/go.dir/ai_monte_carlo.cpp.o
+.PHONY : ai_monte_carlo.cpp.o
+
+ai_monte_carlo.i: ai_monte_carlo.cpp.i
+.PHONY : ai_monte_carlo.i
+
+# target to preprocess a source file
+ai_monte_carlo.cpp.i:
+	$(MAKE) -f CMakeFiles/go.dir/build.make CMakeFiles/go.dir/ai_monte_carlo.cpp.i
+.PHONY : ai_monte_carlo.cpp.i
+
+ai_monte_carlo.s: ai_monte_carlo.cpp.s
+.PHONY : ai_monte_carlo.s
+
+# target to generate assembly for a file
+ai_monte_carlo.cpp.s:
+	$(MAKE) -f CMakeFiles/go.dir/build.make CMakeFiles/go.dir/ai_monte_carlo.cpp.s
+.PHONY : ai_monte_carlo.cpp.s
+
 ai_random.o: ai_random.cpp.o
 .PHONY : ai_random.o
 
@@ -384,6 +408,9 @@ help:
 	@echo "... GoBoard.o"
 	@echo "... GoBoard.i"
 	@echo "... GoBoard.s"
+	@echo "... ai_monte_carlo.o"
+	@echo "... ai_monte_carlo.i"
+	@echo "... ai_monte_carlo.s"
 	@echo "... ai_random.o"
 	@echo "... ai_random.i"
 	@echo "... ai_random.s"

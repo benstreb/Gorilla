@@ -125,7 +125,7 @@ bool GoBoard::placePiece(int player, int x, int y)
 		placed_pieces_player.insert(std::make_pair(newPieceID, player));
 		
 		//Check for dead enemy pieces
-		std::vector<coord>* dead_enemy_pieces = getDeadPiecesForPlayer(player*-1);
+		std::vector<coord>* dead_enemy_pieces = getDeadPiecesForPlayer(player*-1, newCord);
 		int num_dead_enemies = dead_enemy_pieces->size();
 		if( num_dead_enemies > 0)
 		{
@@ -167,12 +167,10 @@ bool GoBoard::placePiece(int player, int x, int y)
 		}
 		else
 		{
-			//check for dead ally pieces
-			std::vector<coord>* dead_ally_pieces = getDeadPiecesForPlayer(player);
-			int num_dead_ally = dead_ally_pieces->size();
-			delete dead_ally_pieces;
+			//check if placing the piece kills itself
+			bool suicide = !stillAlive(newCord);
 			//If suicidal move
-			if( num_dead_ally > 0)
+			if( suicide)
 			{
 				//std::cout << "CHOOSE LIFE!" << std::endl;
 				//rollback
@@ -628,8 +626,9 @@ void GoBoard::eraseControlMap(){
 }
 
 //IMPORTANT: VECTOR PASSED FROM THIS FUNCTION NEEDS TO BE HANDLED!
-std::vector<coord>* GoBoard::getDeadPiecesForPlayer(int player)
+std::vector<coord>* GoBoard::getDeadPiecesForPlayer(int player, coord last_move)
 {
+	/*
 	std::vector<coord>* dead = new std::vector<coord>;
 	for(std::map<coord, int>::iterator itr = placed_pieces.begin(); 
 									itr != placed_pieces.end();
@@ -644,7 +643,107 @@ std::vector<coord>* GoBoard::getDeadPiecesForPlayer(int player)
 			}
 		}
 	}
+	*/
+		std::vector<coord>* dead = new std::vector<coord>;	
+		std::map<coord,bool> dead_map;
 	
+		coord next = last_move;
+		
+		coord up = std::make_pair(next.first, next.second-1);
+		coord down = std::make_pair(next.first, next.second+1);
+		coord right = std::make_pair(next.first+1, next.second);
+		coord left = std::make_pair(next.first-1, next.second);
+		
+		std::vector<coord> next_locs;
+		next_locs.push_back(up);
+		next_locs.push_back(down);
+		next_locs.push_back(left);
+		next_locs.push_back(right);
+		
+		for(unsigned int i=0; i< next_locs.size(); ++i)
+		{
+			coord next_loc = next_locs[i];
+			if(next_loc.first >= 0 
+				&& next_loc.first < BOARD_SIZE
+				&& next_loc.second >= 0 
+				&& next_loc.second < BOARD_SIZE
+				&& pieces[next_loc.first][next_loc.second] == player)
+			{
+				std::vector<coord>* new_dead = checkChainForDeadPieces(next_loc);
+				for(unsigned int d = 0; d < new_dead->size(); ++d)
+				{
+					coord next_dead = (*new_dead)[d];
+					if(dead_map.find(next_dead) == dead_map.end())
+					{
+						dead -> push_back(next_dead);
+						dead_map.insert(std::make_pair(next_dead,true));
+					}
+				}
+				delete new_dead;
+			}
+		}
+		
+		return dead;
+}
+
+//IMPORTANT: VECTOR PASSED FROM THIS FUNCTION NEEDS TO BE HANDLED!
+std::vector<coord>* GoBoard::checkChainForDeadPieces(coord piece)
+{
+	std::vector<coord>* dead = new std::vector<coord>;
+	///////////////////
+	
+	std::queue<coord> chain;
+	waveFrontType visited;
+	
+	int thisPlayer = getPlayerAtCoord(piece);
+	
+	dead->push_back(piece);
+	chain.push(piece);
+	visited.insert(std::pair<coord,bool>(piece, true) );
+	
+	while(!chain.empty())
+	{
+		coord newest = chain.front();
+		coord next = newest;
+		chain.pop();
+		
+		coord up = std::make_pair(next.first, next.second-1);
+		coord down = std::make_pair(next.first, next.second+1);
+		coord right = std::make_pair(next.first+1, next.second);
+		coord left = std::make_pair(next.first-1, next.second);
+		
+		std::vector<coord> next_locs;
+		next_locs.push_back(up);
+		next_locs.push_back(down);
+		next_locs.push_back(left);
+		next_locs.push_back(right);
+		
+		for(unsigned int i=0; i< next_locs.size(); ++i)
+		{		
+			coord next_loc = next_locs[i];
+			if(next_loc.first >= 0 
+				&& next_loc.first < BOARD_SIZE
+				&& next_loc.second >= 0 
+				&& next_loc.second < BOARD_SIZE
+				&& visited.find(next_loc) == visited.end())
+			{
+				//If open square, the chain is still alive
+				if(pieces[next_loc.first][next_loc.second] == 0)
+				{
+					dead->clear();
+					return dead;
+				}
+				else if(pieces[next_loc.first][next_loc.second] == thisPlayer)
+				{
+					chain.push(next_loc);
+					dead->push_back(next_loc);
+					visited.insert(std::pair<coord,bool>(next_loc, true) );
+				}
+			}
+		}
+	}
+	
+	///////////////////
 	return dead;
 }
 

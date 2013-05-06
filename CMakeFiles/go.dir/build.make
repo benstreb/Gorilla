@@ -299,6 +299,29 @@ CMakeFiles/go.dir/ai_random.cpp.o.provides: CMakeFiles/go.dir/ai_random.cpp.o.re
 
 CMakeFiles/go.dir/ai_random.cpp.o.provides.build: CMakeFiles/go.dir/ai_random.cpp.o
 
+CMakeFiles/go.dir/ai_monte_carlo.cpp.o: CMakeFiles/go.dir/flags.make
+CMakeFiles/go.dir/ai_monte_carlo.cpp.o: ai_monte_carlo.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/wrigha3/Gorilla/CMakeFiles $(CMAKE_PROGRESS_12)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/go.dir/ai_monte_carlo.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -g -Wall -pedantic -std=c++0x -o CMakeFiles/go.dir/ai_monte_carlo.cpp.o -c /home/wrigha3/Gorilla/ai_monte_carlo.cpp
+
+CMakeFiles/go.dir/ai_monte_carlo.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/go.dir/ai_monte_carlo.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -g -Wall -pedantic -std=c++0x -E /home/wrigha3/Gorilla/ai_monte_carlo.cpp > CMakeFiles/go.dir/ai_monte_carlo.cpp.i
+
+CMakeFiles/go.dir/ai_monte_carlo.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/go.dir/ai_monte_carlo.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -g -Wall -pedantic -std=c++0x -S /home/wrigha3/Gorilla/ai_monte_carlo.cpp -o CMakeFiles/go.dir/ai_monte_carlo.cpp.s
+
+CMakeFiles/go.dir/ai_monte_carlo.cpp.o.requires:
+.PHONY : CMakeFiles/go.dir/ai_monte_carlo.cpp.o.requires
+
+CMakeFiles/go.dir/ai_monte_carlo.cpp.o.provides: CMakeFiles/go.dir/ai_monte_carlo.cpp.o.requires
+	$(MAKE) -f CMakeFiles/go.dir/build.make CMakeFiles/go.dir/ai_monte_carlo.cpp.o.provides.build
+.PHONY : CMakeFiles/go.dir/ai_monte_carlo.cpp.o.provides
+
+CMakeFiles/go.dir/ai_monte_carlo.cpp.o.provides.build: CMakeFiles/go.dir/ai_monte_carlo.cpp.o
+
 # Object files for target go
 go_OBJECTS = \
 "CMakeFiles/go.dir/main.cpp.o" \
@@ -311,7 +334,8 @@ go_OBJECTS = \
 "CMakeFiles/go.dir/load_shaders.cpp.o" \
 "CMakeFiles/go.dir/boundingbox.cpp.o" \
 "CMakeFiles/go.dir/GoBoard.cpp.o" \
-"CMakeFiles/go.dir/ai_random.cpp.o"
+"CMakeFiles/go.dir/ai_random.cpp.o" \
+"CMakeFiles/go.dir/ai_monte_carlo.cpp.o"
 
 # External object files for target go
 go_EXTERNAL_OBJECTS =
@@ -327,6 +351,7 @@ go: CMakeFiles/go.dir/load_shaders.cpp.o
 go: CMakeFiles/go.dir/boundingbox.cpp.o
 go: CMakeFiles/go.dir/GoBoard.cpp.o
 go: CMakeFiles/go.dir/ai_random.cpp.o
+go: CMakeFiles/go.dir/ai_monte_carlo.cpp.o
 go: /usr/lib/x86_64-linux-gnu/libGLU.so
 go: /usr/lib/x86_64-linux-gnu/libGL.so
 go: /usr/lib/x86_64-linux-gnu/libSM.so
@@ -354,6 +379,7 @@ CMakeFiles/go.dir/requires: CMakeFiles/go.dir/load_shaders.cpp.o.requires
 CMakeFiles/go.dir/requires: CMakeFiles/go.dir/boundingbox.cpp.o.requires
 CMakeFiles/go.dir/requires: CMakeFiles/go.dir/GoBoard.cpp.o.requires
 CMakeFiles/go.dir/requires: CMakeFiles/go.dir/ai_random.cpp.o.requires
+CMakeFiles/go.dir/requires: CMakeFiles/go.dir/ai_monte_carlo.cpp.o.requires
 .PHONY : CMakeFiles/go.dir/requires
 
 CMakeFiles/go.dir/clean:

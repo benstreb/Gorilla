@@ -10,6 +10,7 @@ FILE(REMOVE_RECURSE
   "CMakeFiles/go.dir/boundingbox.cpp.o"
   "CMakeFiles/go.dir/GoBoard.cpp.o"
   "CMakeFiles/go.dir/ai_random.cpp.o"
+  "CMakeFiles/go.dir/ai_monte_carlo.cpp.o"
   "go.pdb"
   "go"
 )

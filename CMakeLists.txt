@@ -15,6 +15,7 @@ add_executable(go
   boundingbox.cpp
   GoBoard.cpp
   ai_random.cpp
+  ai_monte_carlo.cpp
   argparser.h
   camera.h
   glCanvas.h
@@ -30,6 +31,7 @@ add_executable(go
   GoBoard.h
   ai.h
   ai_random.h
+  ai_monte_carlo.h
 )
 
 # platform specific compiler flags to output all compiler warnings

@@ -80,7 +80,8 @@ void calculateScores();
 
 bool isKo();
 
-std::vector<coord>* getDeadPiecesForPlayer(int player);
+std::vector<coord>* getDeadPiecesForPlayer(int player, coord last_move);
+std::vector<coord>* checkChainForDeadPieces(coord piece);
 bool stillAlive(coord piece);
 
 int getPlayerAtCoord(coord place);

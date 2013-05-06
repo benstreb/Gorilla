@@ -9,6 +9,7 @@
 
 #include "ai.h"
 #include "ai_random.h"
+#include "ai_monte_carlo.h"
 
 class ArgParser {
 
@@ -39,6 +40,13 @@ public:
 	two_lights = true;;
       } else if (!strcmp(argv[i],"-ai_random")) {
 		theAI = new AI_Random(1);
+		using_ai = true;
+      } else if (!strcmp(argv[i],"-ai_monte_carlo")) {
+		i++; assert (i < argc);
+		int games = atoi(argv[i]);
+		i++; assert (i < argc);
+		int turns = atoi(argv[i]);
+		theAI = new AI_Monte_Carlo(1, games, turns);
 		using_ai = true;
       } else {
 	printf ("whoops error with command line argument %d: '%s'\n",i,argv[i]);

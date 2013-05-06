@@ -4,6 +4,11 @@
 CMakeFiles/go.dir/GoBoard.cpp.o
  /home/wrigha3/Gorilla/GoBoard.cpp
  /home/wrigha3/Gorilla/GoBoard.h
+CMakeFiles/go.dir/ai_monte_carlo.cpp.o
+ /home/wrigha3/Gorilla/GoBoard.h
+ /home/wrigha3/Gorilla/ai.h
+ /home/wrigha3/Gorilla/ai_monte_carlo.cpp
+ /home/wrigha3/Gorilla/ai_monte_carlo.h
 CMakeFiles/go.dir/ai_random.cpp.o
  /home/wrigha3/Gorilla/GoBoard.h
  /home/wrigha3/Gorilla/ai.h
@@ -29,6 +34,7 @@ CMakeFiles/go.dir/edge.cpp.o
 CMakeFiles/go.dir/glCanvas.cpp.o
  /home/wrigha3/Gorilla/GoBoard.h
  /home/wrigha3/Gorilla/ai.h
+ /home/wrigha3/Gorilla/ai_monte_carlo.h
  /home/wrigha3/Gorilla/ai_random.h
  /home/wrigha3/Gorilla/argparser.h
  /home/wrigha3/Gorilla/boundingbox.h
@@ -44,6 +50,7 @@ CMakeFiles/go.dir/glCanvas.cpp.o
 CMakeFiles/go.dir/load_shaders.cpp.o
  /home/wrigha3/Gorilla/GoBoard.h
  /home/wrigha3/Gorilla/ai.h
+ /home/wrigha3/Gorilla/ai_monte_carlo.h
  /home/wrigha3/Gorilla/ai_random.h
  /home/wrigha3/Gorilla/argparser.h
  /home/wrigha3/Gorilla/glCanvas.h
@@ -51,6 +58,7 @@ CMakeFiles/go.dir/load_shaders.cpp.o
 CMakeFiles/go.dir/main.cpp.o
  /home/wrigha3/Gorilla/GoBoard.h
  /home/wrigha3/Gorilla/ai.h
+ /home/wrigha3/Gorilla/ai_monte_carlo.h
  /home/wrigha3/Gorilla/ai_random.h
  /home/wrigha3/Gorilla/argparser.h
  /home/wrigha3/Gorilla/boundingbox.h
@@ -68,6 +76,7 @@ CMakeFiles/go.dir/matrix.cpp.o
 CMakeFiles/go.dir/mesh.cpp.o
  /home/wrigha3/Gorilla/GoBoard.h
  /home/wrigha3/Gorilla/ai.h
+ /home/wrigha3/Gorilla/ai_monte_carlo.h
  /home/wrigha3/Gorilla/ai_random.h
  /home/wrigha3/Gorilla/argparser.h
  /home/wrigha3/Gorilla/boundingbox.h
@@ -84,6 +93,7 @@ CMakeFiles/go.dir/mesh.cpp.o
 CMakeFiles/go.dir/render.cpp.o
  /home/wrigha3/Gorilla/GoBoard.h
  /home/wrigha3/Gorilla/ai.h
+ /home/wrigha3/Gorilla/ai_monte_carlo.h
  /home/wrigha3/Gorilla/ai_random.h
  /home/wrigha3/Gorilla/argparser.h
  /home/wrigha3/Gorilla/boundingbox.h
