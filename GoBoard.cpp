@@ -716,6 +716,7 @@ bool GoBoard::applySpeculativePiece()
 	if (success)
 	{
 		turn *= -1;
+		just_passed = false;
 	}
 	return success;
 }

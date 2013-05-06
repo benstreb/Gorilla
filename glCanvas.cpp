@@ -161,15 +161,18 @@ void GLCanvas::mouse(int button, int state, int x, int y) {
 	  {
 		  theBoard->passTurn();
 
-		  coord ai_move = args->theAI->getMove(theBoard);
-		  if(ai_move == std::make_pair(-1,-1))
+		  if(args->using_ai)
 		  {
-			theBoard->endOfGame();
-		  }
-		  else
-		  {
-			theBoard->placePiece(theBoard->getTurn(), ai_move.first, ai_move.second);
-			theBoard->nextTurn();
+			  coord ai_move = args->theAI->getMove(theBoard);
+			  if(ai_move == std::make_pair(-1,-1))
+			  {
+				theBoard->endOfGame();
+			  }
+			  else
+			  {
+				theBoard->placePiece(theBoard->getTurn(), ai_move.first, ai_move.second);
+				theBoard->nextTurn();
+			  }
 		  }
 	  }
   }
