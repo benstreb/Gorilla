@@ -38,7 +38,7 @@ public:
       } else if (!strcmp(argv[i],"-2lights")) {
 	two_lights = true;;
       } else if (!strcmp(argv[i],"-ai_random")) {
-		theAI = new AI_Random(-1);
+		theAI = new AI_Random(1);
 		using_ai = true;
       } else {
 	printf ("whoops error with command line argument %d: '%s'\n",i,argv[i]);

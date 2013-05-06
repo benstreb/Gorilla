@@ -18,28 +18,25 @@ AI_Random::~AI_Random(){
 coord AI_Random::getMove(GoBoard* board)
 {
 	srand (time(NULL));
-	int x = -1;
-	int y = -1;
 	
-	bool success = false;
-	while(!success){
-		GoBoard testBoard(*board);
-		
-		x = rand() % BOARD_SIZE;
-		y = rand() % BOARD_SIZE;
-		
-		//std::cout << "PLAYER: " << player << " TRYING: " << x << ", " << y << std::endl;
-		
-		success = testBoard.placePiece(player, x, y);
-		/*
-		if(success)
-		{
-			std::cout << "Value for AI: " << testBoard.getBoardStateForPlayer(player) << std::endl;	
-		}
-		*/
-		
+	std::cout << "moves for player: " << player << std::endl;
+	std::vector<coord>* moves = board->getAllReasonableMoves(player);
+	int num_moves = moves->size();
+	
+	coord choice = std::make_pair(-1,-1);
+	
+	if(num_moves == 0)
+	{
+		std::cout << "NO available moves, pass" << std::endl;
 	}
-	return std::make_pair(x,y);
+	else
+	{
+		choice = (*moves)[rand() % num_moves];
+		std::cout << "Chose move: " << choice.first << ", " << choice.second << std::endl;
+	}
+
+	delete moves;
+	return choice;
 }
 
 

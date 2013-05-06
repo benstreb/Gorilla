@@ -256,7 +256,7 @@ void Mesh::setupVBOs() {
   floor_quad_verts.clear();
   cleanupVBOs();
   // setup the new geometry
-  Vec3f light_position = LightPosition();
+  //Vec3f light_position = LightPosition();
   //SetupLight(light_position);
   SetupFloor();
   SetupMesh(table, board_tri_verts_VBO, board_tri_verts);

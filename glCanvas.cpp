@@ -109,7 +109,7 @@ void GLCanvas::reshape(int w, int h) {
 // Callback function for mouse click or release
 // ========================================================
 
-void GLCanvas::mouse(int button, int /*state*/, int x, int y) {
+void GLCanvas::mouse(int button, int state, int x, int y) {
   // Save the current state of the mouse.  This will be
   // used by the 'motion' function
   mouseButton = button;
@@ -117,23 +117,60 @@ void GLCanvas::mouse(int button, int /*state*/, int x, int y) {
   mouseY = y;
   controlPressed = (glutGetModifiers() & GLUT_ACTIVE_CTRL) != 0;
   
+  //std::cout << "mouse: " << state << std::endl;
+  
   //mouseButton == GLUT_LEFT_BUTTON && !mesh->editBoard().applySpeculativePiece();
   
-  bool success = mesh->editBoard().applySpeculativePiece();
-  mouseButton = GLUT_LEFT_BUTTON && !success;
+  GoBoard* theBoard = &(mesh->editBoard());
   
-  if(success)
+  if(mouseButton == GLUT_LEFT_BUTTON && state == 0)
   {
-	  if(args->using_ai)
-	  {	
-		  GoBoard* theBoard = &(mesh->editBoard());
-		  //theBoard->printControl();
-		  //std::cout << "Player is: " << theBoard->getTurn()*-1 << std::endl;
-		  std::cout << "Value for Player: " << theBoard->getBoardStateForPlayer(theBoard->getTurn()*-1) << std::endl;
-		  coord ai_move = args->theAI->getMove(theBoard);
-		  theBoard->placePiece(theBoard->getTurn(), ai_move.first, ai_move.second);
-		  std::cout << "Value for AI: " << theBoard->getBoardStateForPlayer(theBoard->getTurn()) << std::endl;
+	  bool success = mesh->editBoard().applySpeculativePiece();
+	  mouseButton = GLUT_LEFT_BUTTON && !success;
+	  
+	  if(success)
+	  {
+		  if(args->using_ai)
+		  {		  
+			  //theBoard->printControl();
+			  //std::cout << "Player is: " << theBoard->getTurn()*-1 << std::endl;
+			  //std::cout << "Value for Player: " << theBoard->getBoardStateForPlayer(theBoard->getTurn()*-1) << std::endl;
+			  coord ai_move = args->theAI->getMove(theBoard);
+			  if(ai_move == std::make_pair(-1,-1))
+			  {
+				theBoard->passTurn();
+			  }
+			  else
+			  {
+				theBoard->placePiece(theBoard->getTurn(), ai_move.first, ai_move.second);
+				theBoard->nextTurn();
+			  }
+			  //std::cout << "Value for AI: " << theBoard->getBoardStateForPlayer(theBoard->getTurn()) << std::endl;
+			  
+		  }
+	  }
+  }
+  else if(mouseButton == GLUT_RIGHT_BUTTON && state == 0)
+  {
+	  std::cout << "SKIP MY TURN" << std::endl;
+	  if(theBoard->getJustPassed())
+	  {
+		  theBoard->endOfGame();
+	  }
+	  else
+	  {
 		  theBoard->passTurn();
+
+		  coord ai_move = args->theAI->getMove(theBoard);
+		  if(ai_move == std::make_pair(-1,-1))
+		  {
+			theBoard->endOfGame();
+		  }
+		  else
+		  {
+			theBoard->placePiece(theBoard->getTurn(), ai_move.first, ai_move.second);
+			theBoard->nextTurn();
+		  }
 	  }
   }
 }
@@ -200,7 +237,7 @@ void GLCanvas::mouseRay(int mouseX, int mouseY) {
   modDir /= dir.y();
   modDir *= camPos.y() - 1;
 
-  Vec3f t = camPos - modDir;
+  //Vec3f t = camPos - modDir;
   /*glTranslatef(t.x() - .4*dir.x(), t.y() - .4*dir.y(), t.z() - .4*dir.z());
   float color = 0.0;
   for (int i = 0; i < 10; i++) {

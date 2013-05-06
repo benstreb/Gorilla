@@ -2,6 +2,7 @@
 #define _GO_AI_H_
 
 #include "GoBoard.h"
+#include <vector>
 
 class AI{
 	
@@ -13,6 +14,7 @@ class AI{
 	~AI(){};
 	
 	virtual coord getMove(GoBoard* board) = 0;
+	
 		
 };
 

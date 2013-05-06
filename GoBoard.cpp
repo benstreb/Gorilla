@@ -38,6 +38,8 @@ GoBoard::GoBoard()
 	
 	player1_score = -1;
 	player2_score = -1;
+	
+	just_passed = false;
 }
 
 GoBoard::GoBoard( const GoBoard& other )
@@ -172,6 +174,7 @@ bool GoBoard::placePiece(int player, int x, int y)
 			//If suicidal move
 			if( num_dead_ally > 0)
 			{
+				//std::cout << "CHOOSE LIFE!" << std::endl;
 				//rollback
 				auto piece = std::vector<coord>();
 				piece.push_back(coord(x, y));
@@ -305,6 +308,72 @@ bool GoBoard::legalMove(int player, int x, int y)
 	return false;
 }
 
+//WARNING: ownership of moves being passed
+//need to clean up
+std::vector<coord>* GoBoard::getAllLegalMoves(int player)
+{
+	std::vector<coord>* moves = new std::vector<coord>;
+	for(int j = 0; j<BOARD_SIZE; ++j)
+	{
+		for(int i = 0; i < BOARD_SIZE; ++i)
+		{
+			GoBoard testBoard(*this);
+			bool test = testBoard.placePiece(player, j, i);
+			if(test)
+			{
+				moves->push_back(std::make_pair(j,i));
+			}
+		}
+
+	}
+	return moves;
+}
+//WARNING: ownership of moves being passed
+//need to clean up
+std::vector<coord>* GoBoard::getAllReasonableMoves(int player)
+{
+	std::vector<coord>* moves = getAllLegalMoves(player);
+	std::vector<coord>* return_moves = new std::vector<coord>;
+	
+	//of all legal moves, return those which are not moves
+	//that fill in single point eyes.
+	for(unsigned int e = 0; e < moves->size(); ++e)
+	{
+		coord next = (*moves)[e];
+		coord up = std::make_pair(next.first, next.second-1);
+		coord down = std::make_pair(next.first, next.second+1);
+		coord right = std::make_pair(next.first+1, next.second);
+		coord left = std::make_pair(next.first-1, next.second);
+		
+		std::vector<coord> next_locs;
+		next_locs.push_back(up);
+		next_locs.push_back(down);
+		next_locs.push_back(left);
+		next_locs.push_back(right);
+		
+		for(unsigned int i=0; i< next_locs.size(); ++i)
+		{		
+			coord next_loc = next_locs[i];
+			if(next_loc.first >= 0 
+				&& next_loc.first < BOARD_SIZE
+				&& next_loc.second >= 0 
+				&& next_loc.second < BOARD_SIZE)
+			{
+				//if at least one adjacent space isn't yours, then it's not a single point eye
+				if(pieces[next_loc.first][next_loc.second] != player)
+				{
+					return_moves->push_back(next);
+					break;
+				}
+			}
+		}
+	}
+	
+	delete moves;
+	
+	return return_moves;
+}
+
 void GoBoard::printControl()
 {
 	for(int j = 0; j<BOARD_SIZE; ++j)
@@ -366,9 +435,23 @@ void GoBoard::printScoreBoard()
 	}
 }
 
-void GoBoard::endOfGame()
+int GoBoard::endOfGame()
 {
 	calculateScores();
+	std::cout << "GAME OVER" << std::endl;
+	int player_1_score = getBoardStateForPlayer(-1);
+	int player_2_score = getBoardStateForPlayer(1);
+	
+	if(player_1_score > player_2_score)
+	{
+		std::cout << "Player 1 is the best." << std::endl;
+		return -1;
+	}
+	else
+	{
+		std::cout << "Player 2 is the best." << std::endl;
+		return 1;
+	}
 }
 
 //Helper
@@ -496,7 +579,7 @@ void GoBoard::fillLine(coord start, coord dir)
 	coord current = start;
 	int player = getPlayerAtCoord(start);
 	
-	std::cout << player;
+	//std::cout << player;
 	
 	while(placed_pieces.find(current) == placed_pieces.end())
 	{

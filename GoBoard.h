@@ -35,13 +35,20 @@ int getTurn(){return turn;}
 int getPiece(int x, int y) const {return pieces[x][y];}
 double getControl(int x, int y) const {return control[x][y];}
 double getBoardStateForPlayer(int player);
+bool getJustPassed(){return just_passed;}
 
 //Modifiers 
 bool placePiece(int player, int x, int y);
-void passTurn(){turn *= -1;}
+void passTurn(){turn *= -1; just_passed = true;}
+void nextTurn(){turn *= -1; just_passed = false;}
 
 //Misc
 bool legalMove(int player, int x, int y);
+std::vector<coord>* getAllLegalMoves(int player);
+
+//similar to above, but does not play in single-point eyes
+std::vector<coord>* getAllReasonableMoves(int player);
+
 //Modifiers 
 bool removePiece(int x, int y);
 bool removePieces(std::vector<coord>& toRemove);
@@ -59,7 +66,7 @@ void printPrevBoard();
 void printPrev2Board();
 void printScoreBoard();
 
-void endOfGame();
+int endOfGame();
 
 //Helper
 private:
@@ -83,6 +90,7 @@ int 	pieces[BOARD_SIZE][BOARD_SIZE];
 int		prev_pieces[BOARD_SIZE][BOARD_SIZE];
 int		prev2_pieces[BOARD_SIZE][BOARD_SIZE];
 int 	score_board[BOARD_SIZE][BOARD_SIZE];
+double 	control[BOARD_SIZE][BOARD_SIZE];
 
 int nextPieceID;
 
@@ -90,11 +98,12 @@ int player1_score;
 int player2_score;
 
 int turn;
+bool just_passed;
 
 std::map<coord, int>	placed_pieces;
 std::map<int, int> placed_pieces_player;
 
-double control[BOARD_SIZE][BOARD_SIZE];
+
 
 std::pair<std::pair<int, int>, int> speculativePiece;
 
