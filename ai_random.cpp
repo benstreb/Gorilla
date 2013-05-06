@@ -8,7 +8,7 @@
 
 
 AI_Random::AI_Random(int player) : AI(player){
-	std::cout << "Made a random AI with player" << std::endl;
+	std::cout << "Made a random AI as player " << player << std::endl;
 }
 
 AI_Random::~AI_Random(){
@@ -19,7 +19,7 @@ coord AI_Random::getMove(GoBoard* board)
 {
 	srand (time(NULL));
 	
-	std::cout << "moves for player: " << player << std::endl;
+	//std::cout << "moves for player: " << player << std::endl;
 	std::vector<coord>* moves = board->getAllReasonableMoves(player);
 	int num_moves = moves->size();
 	
@@ -32,7 +32,7 @@ coord AI_Random::getMove(GoBoard* board)
 	else
 	{
 		choice = (*moves)[rand() % num_moves];
-		std::cout << "Chose move: " << choice.first << ", " << choice.second << std::endl;
+		std::cout << "Player " << player << " chose move: " << choice.first << ", " << choice.second << std::endl;
 	}
 
 	delete moves;

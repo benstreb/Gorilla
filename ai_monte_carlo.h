@@ -12,6 +12,8 @@ class AI_Monte_Carlo : public AI{
 	
 	virtual coord getMove(GoBoard* board);
 	
+	double evaluateMove(GoBoard* board, int player, coord loc);
+	
 	int games;
 	int turns;
 

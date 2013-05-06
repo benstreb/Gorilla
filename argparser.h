@@ -36,18 +36,65 @@ public:
       } else if (!strcmp(argv[i],"-size")) {
 	i++; assert (i < argc); 
 	width = height = atoi(argv[i]);
-      } else if (!strcmp(argv[i],"-2lights")) {
-	two_lights = true;;
+      } else if (!strcmp(argv[i],"-eval")) {
+		using_evaluator = true;
+		i++; assert (i < argc);
+		int games = atoi(argv[i]);
+		i++; assert (i < argc);
+		int turns = atoi(argv[i]);
+		
+		evaluator = new AI_Monte_Carlo(0, games, turns);
+      } else if (!strcmp(argv[i],"-no_gui")) {
+		gui = false;
+      }
+      else if (!strcmp(argv[i],"-ai_vs_ai")) {
+		assert(!using_ai);
+		ai_vs_ai = true;
+		
       } else if (!strcmp(argv[i],"-ai_random")) {
-		theAI = new AI_Random(1);
-		using_ai = true;
+		if(!ai_vs_ai)
+		{
+			theAI = new AI_Random(1);
+			using_ai = true;
+		}
+		else
+		{
+			assert(ai_id < 2);
+			if(ai_id == 0)
+			{
+				theAI = new AI_Random(-1);
+				ai_id++;
+			}
+			else
+			{
+				theAI_2 = new AI_Random(1);
+				ai_id++;
+			}
+		}
       } else if (!strcmp(argv[i],"-ai_monte_carlo")) {
 		i++; assert (i < argc);
 		int games = atoi(argv[i]);
 		i++; assert (i < argc);
 		int turns = atoi(argv[i]);
-		theAI = new AI_Monte_Carlo(1, games, turns);
-		using_ai = true;
+		if(!ai_vs_ai)
+		{
+			theAI = new AI_Monte_Carlo(1, games, turns);
+			using_ai = true;			
+		}
+		else
+		{
+			assert(ai_id < 2);
+			if(ai_id == 0)
+			{
+				theAI = new AI_Monte_Carlo(-1, games, turns);
+				ai_id++;
+			}
+			else
+			{
+				theAI_2 = new AI_Monte_Carlo(1, games, turns);
+				ai_id++;
+			}
+		}
       } else {
 	printf ("whoops error with command line argument %d: '%s'\n",i,argv[i]);
 	assert(0);
@@ -61,6 +108,7 @@ public:
     fragment_shader_filename = "";
     width = 1400;
     height = 700;
+    ai_id = 0;
     mirror = false;
     shadow = false;
     geometry = true;
@@ -72,8 +120,11 @@ public:
     glsl_enabled = false;
     glsl_initialized = false;
     two_lights = false;
+    gui = true;
     timer = 0.0;
     using_ai = false;
+    ai_vs_ai = false;
+    using_evaluator = false;
   }
 
   // ==============
@@ -85,6 +136,7 @@ public:
   std::string vertex_shader_filename;
   int width;
   int height;
+  int ai_id;
   bool board_control;
   bool shadow;
   bool mirror;
@@ -97,10 +149,16 @@ public:
   bool glsl_enabled;
   bool glsl_initialized;
   bool two_lights;
+  bool gui;
   bool using_ai;
+  bool ai_vs_ai;
+  bool using_evaluator;
   float timer;
   
   AI* theAI;
+  AI* theAI_2;
+ 
+  AI* evaluator;
 };
 
 #endif

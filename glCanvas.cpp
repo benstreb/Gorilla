@@ -125,28 +125,68 @@ void GLCanvas::mouse(int button, int state, int x, int y) {
   
   if(mouseButton == GLUT_LEFT_BUTTON && state == 0)
   {
-	  bool success = mesh->editBoard().applySpeculativePiece();
+	  bool success = true;
+	  if(!args->ai_vs_ai)
+	  {
+		success = mesh->editBoard().applySpeculativePiece();
+      }
+      else
+      {
+		coord ai1_move = args->theAI->getMove(theBoard);
+		if(ai1_move == std::make_pair(-1,-1))
+		{
+			if(theBoard->getJustPassed())
+			{
+				theBoard->endOfGame();
+				success = false;
+			}
+			else
+			{
+				theBoard->passTurn();
+			}
+		}
+		else
+		{
+			theBoard->placePiece(theBoard->getTurn(), ai1_move.first, ai1_move.second);
+			theBoard->nextTurn();
+		}
+	  }
 	  mouseButton = GLUT_LEFT_BUTTON && !success;
 	  
 	  if(success)
 	  {
 		  if(args->using_ai)
 		  {		  
-			  //theBoard->printControl();
-			  //std::cout << "Player is: " << theBoard->getTurn()*-1 << std::endl;
-			  //std::cout << "Value for Player: " << theBoard->getBoardStateForPlayer(theBoard->getTurn()*-1) << std::endl;
 			  coord ai_move = args->theAI->getMove(theBoard);
 			  if(ai_move == std::make_pair(-1,-1))
 			  {
-				theBoard->passTurn();
+				if(theBoard->getJustPassed())
+				{
+					theBoard->endOfGame();
+				}
+				else
+				{
+					theBoard->passTurn();
+				}
 			  }
 			  else
 			  {
 				theBoard->placePiece(theBoard->getTurn(), ai_move.first, ai_move.second);
 				theBoard->nextTurn();
 			  }
-			  //std::cout << "Value for AI: " << theBoard->getBoardStateForPlayer(theBoard->getTurn()) << std::endl;
-			  
+		  }
+		  else if(args->ai_vs_ai)
+		  {
+			  coord ai2_move = args->theAI_2->getMove(theBoard);
+			  if(ai2_move == std::make_pair(-1,-1))
+			  {
+				theBoard->passTurn();
+			  }
+			  else
+			  {
+				theBoard->placePiece(theBoard->getTurn(), ai2_move.first, ai2_move.second);
+				theBoard->nextTurn();
+			  }			  
 		  }
 	  }
   }
@@ -186,20 +226,25 @@ void GLCanvas::motion(int x, int y) {
   // Left button = rotation
   // (rotate camera around the up and horizontal vectors)
   if (mouseButton == GLUT_LEFT_BUTTON) {
+	/*
     camera->rotateCamera(0.005*(mouseX-x), 0.005*(mouseY-y));
     mouseX = x;
     mouseY = y;
+    */
   }
   // Middle button = translation
   // (move camera perpendicular to the direction vector)
   else if (mouseButton == GLUT_MIDDLE_BUTTON) {
+	  
     camera->truckCamera(mouseX-x, y-mouseY);
     mouseX = x;
     mouseY = y;
+    
   }
   // Right button = dolly or zoom
   // (move camera along the direction vector)
   else if (mouseButton == GLUT_RIGHT_BUTTON) {
+	  /*
     if (controlPressed) {
       camera->zoomCamera(mouseY-y);
     } else {
@@ -207,7 +252,9 @@ void GLCanvas::motion(int x, int y) {
     }
     mouseX = x;
     mouseY = y;
+    */
   }
+  
 
   // Redraw the scene with the new camera parameters
   glutPostRedisplay();
@@ -364,8 +411,22 @@ void GLCanvas::keyboard(unsigned char key, int /*x*/, int /*y*/) {
     mesh->setupVBOs();
     break;
   case 'e': case 'E':
-    args->silhouette_edges = !args->silhouette_edges;
-    mesh->setupVBOs();
+	{
+		if(args->using_evaluator)
+		{
+			GoBoard* theBoard = &(mesh->editBoard());
+			std::pair<std::pair<int, int>, int>  speculation;
+			speculation = theBoard->getSpeculativePiece();
+			coord spec_loc;
+			spec_loc = speculation.first;
+			int playa;
+			playa = theBoard->getTurn();
+			std::cout << "Evaluate position: " << spec_loc.first << ", " << spec_loc.second << " for player: " << playa << std::endl;
+			double res = 0;
+			res = ((AI_Monte_Carlo*)args->evaluator)->evaluateMove(theBoard, playa, spec_loc);
+			std::cout << "\t" << res << std::endl;
+		}
+	}
     break;
   case 'p': case 'P':
     args->shadow_polygons = !args->shadow_polygons;

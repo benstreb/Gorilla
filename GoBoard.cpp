@@ -435,7 +435,8 @@ void GoBoard::printScoreBoard()
 
 int GoBoard::endOfGame()
 {
-	calculateScores();
+	//until I can fix calculate scores, we'll fake it with board state evaluator
+	//calculateScores();
 	std::cout << "GAME OVER" << std::endl;
 	int player_1_score = getBoardStateForPlayer(-1);
 	int player_2_score = getBoardStateForPlayer(1);
@@ -491,7 +492,7 @@ void GoBoard::calculateScores()
 		}
 	}
 	
-	printScoreBoard();
+	//printScoreBoard();
 }
 
 void GoBoard::updateControlMap(int player, int x, int y)
