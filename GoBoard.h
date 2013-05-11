@@ -24,90 +24,87 @@ const float PIECE_Y_SCALE = 0.03f;
 const float PIECE_Z_SCALE = 0.1f;
 
 class GoBoard {
-public:
+  public:
 
-GoBoard();
-GoBoard( const GoBoard& other );
-~GoBoard();
+  GoBoard();
+  GoBoard( const GoBoard& other );
+  ~GoBoard();
 
-//Accessors
-int getTurn(){return turn;}
-int getPiece(int x, int y) const {return pieces[x][y];}
-double getControl(int x, int y) const {return control[x][y];}
-double getBoardStateForPlayer(int player);
-bool getJustPassed(){return just_passed;}
+  //Accessors
+  int getTurn(){return turn;}
+  int getPiece(int x, int y) const {return pieces[x][y];}
+  double getControl(int x, int y) const {return control[x][y];}
+  double getBoardStateForPlayer(int player);
+  bool getJustPassed(){return just_passed;}
 
-//Modifiers 
-bool placePiece(int player, int x, int y);
-void passTurn(){turn *= -1; just_passed = true;}
-void nextTurn(){turn *= -1; just_passed = false;}
+  //Modifiers 
+  bool placePiece(int player, int x, int y);
+  void passTurn(){turn *= -1; just_passed = true;}
+  void nextTurn(){turn *= -1; just_passed = false;}
 
-//Misc
-bool legalMove(int player, int x, int y);
-std::vector<coord>* getAllLegalMoves(int player);
+  //Misc
+  bool legalMove(int player, int x, int y);
+  std::vector<coord>* getAllLegalMoves(int player);
 
-//similar to above, but does not play in single-point eyes
-std::vector<coord>* getAllReasonableMoves(int player);
+  //similar to above, but does not play in single-point eyes
+  std::vector<coord>* getAllReasonableMoves(int player);
 
-//Modifiers 
-bool removePiece(int x, int y);
-bool removePieces(std::vector<coord>& toRemove);
-bool addPieces(std::vector<coord>& toAdd, int player);
+  //Modifiers 
+  bool removePiece(int x, int y);
+  bool removePieces(std::vector<coord>& toRemove);
+  bool addPieces(std::vector<coord>& toAdd, int player);
 
-void printControl();
-void printBoard();
+  void printControl();
+  void printBoard();
 
-std::pair<std::pair<int, int>, int> getSpeculativePiece() const;
-bool applySpeculativePiece();
-void placeSpeculativePiece(int player, int x, int y);
-int getPlayerScore(int player);
+  std::pair<std::pair<int, int>, int> getSpeculativePiece() const;
+  bool applySpeculativePiece();
+  void placeSpeculativePiece(int player, int x, int y);
+  int getPlayerScore(int player);
 
-void printPrevBoard();
-void printPrev2Board();
-void printScoreBoard();
+  void printPrevBoard();
+  void printPrev2Board();
+  void printScoreBoard();
 
-int endOfGame();
+  int endOfGame();
 
-//Helper
-private:
-void updateControlMap(int player, int x, int y);
-void eraseControlMap();
-void updateBoard();
-void updatePrevBoard();
+  //Helper
+  private:
+  void updateControlMap(int player, int x, int y);
+  void eraseControlMap();
+  void updateBoard();
+  void updatePrevBoard();
 
-void fillLine(coord start, coord dir);
-void calculateScores();
+  void fillLine(coord start, coord dir);
+  void calculateScores();
 
-bool isKo();
+  bool isKo();
 
-std::vector<coord>* getDeadPiecesForPlayer(int player, coord last_move);
-std::vector<coord>* checkChainForDeadPieces(coord piece);
-bool stillAlive(coord piece);
+  std::vector<coord>* getDeadPiecesForPlayer(int player, coord last_move);
+  std::vector<coord>* checkChainForDeadPieces(coord piece);
+  bool stillAlive(coord piece);
 
-int getPlayerAtCoord(coord place);
+  int getPlayerAtCoord(coord place);
 
-//Representation
-int 	pieces[BOARD_SIZE][BOARD_SIZE];
-int		prev_pieces[BOARD_SIZE][BOARD_SIZE];
-int		prev2_pieces[BOARD_SIZE][BOARD_SIZE];
-int 	score_board[BOARD_SIZE][BOARD_SIZE];
-double 	control[BOARD_SIZE][BOARD_SIZE];
+  //Representation
+  int pieces[BOARD_SIZE][BOARD_SIZE];
+  int prev_pieces[BOARD_SIZE][BOARD_SIZE];
+  int prev2_pieces[BOARD_SIZE][BOARD_SIZE];
+  int score_board[BOARD_SIZE][BOARD_SIZE];
+  double control[BOARD_SIZE][BOARD_SIZE];
 
-int nextPieceID;
+  int nextPieceID;
 
-int player1_score;
-int player2_score;
+  int player1_score;
+  int player2_score;
 
-int turn;
-bool just_passed;
+  int turn;
+  bool just_passed;
 
-std::map<coord, int>	placed_pieces;
-std::map<int, int> placed_pieces_player;
+  std::map<coord, int> placed_pieces;
+  std::map<int, int> placed_pieces_player;
 
-
-
-std::pair<std::pair<int, int>, int> speculativePiece;
-
+  std::pair<std::pair<int, int>, int> speculativePiece;
 };
 
 #endif
