@@ -192,7 +192,7 @@ void Mesh::DrawPieces(GoBoard &board) {
 
   auto sP = board.getSpeculativePiece();
   //if (board.legalMove(sP.second, sP.first.first, sP.first.second)) {
-  glTranslatef(BOARD_GRID_SPACING*sP.first.first, 0, BOARD_GRID_SPACING*sP.first.second);
+  glTranslatef(BOARD_GRID_SPACING*sP.first.x, 0, BOARD_GRID_SPACING*sP.first.y);
   float color = (sP.second + 1) / 2 + 0.2;
   glColor3f(color, 0, color);
   //glutSolidSphere(0.5, 10, 10);
@@ -239,8 +239,8 @@ void Mesh::DrawControlMap()
 	}
 	
 	glTranslatef(-10, 0, 0);
-	glScalef(10.0f, 1.0/0.005f, 10.0f);
-	glTranslatef(-0.005f, -1, -0.005f);
+	glScalef(10.0f, 1.0f/0.005f, 10.0f);
+	glTranslatef(-0.005f, -1.0f, -0.005f);
 	
 }
 
@@ -513,7 +513,7 @@ void Mesh::setupMatrices(float position_x,float position_y,float position_z,floa
 	gluPerspective(45,args->width/args->height,1.0f,100.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(position_x,position_y,position_z,0,0,0,0,1,0);
+	gluLookAt(position_x,position_y,position_z,lookAt_x,lookAt_y,lookAt_z,0,1,0);
 }
 
 void Mesh::setTextureMatrix(void)

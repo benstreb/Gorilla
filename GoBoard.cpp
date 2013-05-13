@@ -3,16 +3,16 @@
 #include <vector>
 #include <queue>
 #include <utility>
-#include <map>
+//#include <map>
+#include <unordered_map>
 #include <math.h>
 #include <iostream>
 #include <assert.h>
 
 
 typedef std::pair<coord, bool> visitedPair;
-
 typedef std::pair<coord, float> waveFrontPair;
-typedef std::map<coord, bool> waveFrontType;
+typedef std::unordered_map<coord, bool> waveFrontType;
 
 typedef std::pair<coord, int> chainPair;
 
@@ -92,101 +92,72 @@ double GoBoard::getBoardStateForPlayer(int player){
 //Modifers
 bool GoBoard::placePiece(int player, int x, int y) {
   assert(player == -1 || player == 0 || player == 1);
+
   if(player == 0) return false;
-  int temp[BOARD_SIZE][BOARD_SIZE];  
-  for(int i = 0; i < BOARD_SIZE; ++i) {
-    for(int j = 0; j < BOARD_SIZE; ++j) {
-      temp[i][j] = prev_pieces[i][j];
-    }
-  }
-  updatePrevBoard();
-  
-  if(legalMove(player, x, y)) {
-    pieces[x][y] = player;
-    int newPieceID = nextPieceID;
-    nextPieceID++;
-    coord newCord = std::make_pair(x,y);
-    placed_pieces.insert(std::make_pair(newCord, newPieceID));
-    placed_pieces_player.insert(std::make_pair(newPieceID, player));
+  if(!legalMove(player, x, y)) return false;
+
+  int temp[BOARD_SIZE][BOARD_SIZE];
+  memcpy(temp, prev_pieces, sizeof(temp));
+  memcpy(prev_pieces, pieces, sizeof(prev_pieces));
+  //updatePrevBoard();
+
+  pieces[x][y] = player;
+  int newPieceID = nextPieceID;
+  nextPieceID++;
+  coord newCord(x, y);
+  placed_pieces.insert(std::make_pair(newCord, newPieceID));
+  placed_pieces_player.insert(std::make_pair(newPieceID, player));
     
-    //Check for dead enemy pieces
-    std::vector<coord>* dead_enemy_pieces = getDeadPiecesForPlayer(player*-1, newCord);
-    int num_dead_enemies = dead_enemy_pieces->size();
-    if( num_dead_enemies > 0) {
-      removePieces(*dead_enemy_pieces);
-      if(num_dead_enemies == 1) {
-        //std::cout << "Check for Ko!!!!!!!!!!!!!!!!!: " << std::endl;
-        //check for KO
-        bool is_ko = true;
-        for(int i = 0; i < BOARD_SIZE; ++i) {
-          for(int j = 0; j < BOARD_SIZE; ++j) {
-            if(pieces[i][j] != temp[i][j]) {
-              is_ko = false;
-            }
-          }
-        }
-        if(is_ko) {
-          //std::cout << "THIS IS Ko!!!!!!!!!!!!!!!!!: " << std::endl;
-          //ROLLBACK
-          auto piece = std::vector<coord>();
-          piece.push_back(coord(x, y));
-          removePieces(piece);
-          addPieces(*dead_enemy_pieces, player*-1);  
-          for(int i = 0; i < BOARD_SIZE; ++i) {
-            for(int j = 0; j < BOARD_SIZE; ++j) {
-              prev_pieces[i][j] = temp[i][j];
-            }
-          }
-          delete dead_enemy_pieces;
-          return false;
-        }
-      }
-    } else {
-      //check if placing the piece kills itself
-      bool suicide = !stillAlive(newCord);
-      //If suicidal move
-      if( suicide) {
-        //std::cout << "CHOOSE LIFE!" << std::endl;
-        //rollback
-        auto piece = std::vector<coord>();
-        piece.push_back(coord(x, y));
-        removePieces(piece);    
-        for(int i = 0; i < BOARD_SIZE; ++i) {
-          for(int j = 0; j < BOARD_SIZE; ++j) {
-            prev_pieces[i][j] = temp[i][j];
-          }
-        }
-        delete dead_enemy_pieces;
+  //Check for dead enemy pieces
+  coordList dead;
+  int num_dead_enemies = getDeadPiecesForPlayer(player*-1, newCord, dead);
+  if (num_dead_enemies > 0) {
+    /*printf("at: %d, %d\n", newCord.x, newCord.y);
+    for (int i = 0; i < num_dead_enemies; i++) {
+      printf("%d, %d\n", dead.getMove(i).x, dead.getMove(i).y);
+    }
+    printf("------\n");*/
+    removePieces(dead);
+    if(num_dead_enemies == 1) {
+      //std::cout << "Check for Ko!!!!!!!!!!!!!!!!! " << std::endl;
+      //check for KO
+      bool is_ko = (memcmp(pieces, temp, sizeof(pieces)) == 0);
+      if(is_ko) {
+        //std::cout << "THIS IS Ko!!!!!!!!!!!!!!!!! " << std::endl;
+        //ROLLBACK
+        removePiece(x, y);
+        addPieces(dead, player*-1); 
+        memcpy(prev_pieces, temp, sizeof(prev_pieces));
         return false;
       }
-      //else was a legal move
-      updateControlMap(player, x, y);
     }
-    delete dead_enemy_pieces;
+  } else {
+    //check if placing the piece kills itself
+    int visited[BOARD_SIZE][BOARD_SIZE];
+    memset(visited, 0, sizeof(visited));
+    coordList dead;
+    //If suicidal move
+    if(checkChainForDeadPieces(newCord, visited, 0, dead)) {
+      //std::cout << "CHOOSE LIFE!" << std::endl;
+      //rollback
+      removePiece(x, y);
+      memcpy(prev_pieces, temp, sizeof(prev_pieces));
+      return false;
+    }
+    //else was a legal move
+    //updateControlMap(player, x, y);
+  }
     
-    //update the prevprev board
-    for(int i = 0; i < BOARD_SIZE; ++i) {
-      for(int j = 0; j < BOARD_SIZE; ++j) {
-        prev2_pieces[i][j] = temp[i][j];
-      }
-    }
-    return true;
-  }
-  
-  //rollback
-  for(int i = 0; i < BOARD_SIZE; ++i) {
-    for(int j = 0; j < BOARD_SIZE; ++j) {
-      prev_pieces[i][j] = temp[i][j];
-    }
-  }
-  
-  return false;
+  //update the prevprev board
+  memcpy(prev2_pieces, temp, sizeof(prev2_pieces));
+  return true;
 }
 
-bool GoBoard::addPieces(std::vector<coord>& toAdd, int player) {
+bool GoBoard::addPieces(coordList &toAdd, int player) {
   //add pieces back to the control board
-  for( std::vector<coord>::iterator iter = toAdd.begin(); iter!=toAdd.end(); iter++) {
-    if(!placePiece(player,iter->first,iter->second)) {
+  for(int piece_num = 0; piece_num < toAdd.numCoords; piece_num++) {
+    coord piece = toAdd.getMove(piece_num);
+    if(!placePiece(player,piece.x,piece.y)) {
       std::cout << "ERROR ADDING PIECES";
       return false;
     }
@@ -194,18 +165,17 @@ bool GoBoard::addPieces(std::vector<coord>& toAdd, int player) {
   return true;
 }
 
-bool GoBoard::removePieces(std::vector<coord>& toRemove) {
-  for(unsigned int i = 0; i < toRemove.size(); ++i) {
-    coord piece = toRemove[i];
-    if(!removePiece(piece.first, piece.second)) {
+bool GoBoard::removePieces(coordList &toRemove) {
+  for(int piece_num = 0; piece_num < toRemove.numCoords; piece_num++) {
+    coord piece = toRemove.getMove(piece_num);
+    if(!removePiece(piece.x, piece.y)) {
       std::cout << "ERROR REMOVING PIECES" << std::endl;
       return false;
     }
   }
   
-  eraseControlMap();
-  
-  //add remaining pieces back to the control board
+  //eraseControlMap();
+  /*//add remaining pieces back to the control board
   for( std::map<coord,int>::iterator itr = placed_pieces.begin(); itr!=placed_pieces.end(); itr++) {
     int player = ((placed_pieces_player.find(itr->second))->second);
     coord place = itr->first;
@@ -213,16 +183,17 @@ bool GoBoard::removePieces(std::vector<coord>& toRemove) {
     
     //std::cout << "=======================" << std::endl; 
     //printControl();
-  }
+  }*/
   return true;
 }
 
 bool GoBoard::removePiece(int x, int y) {
+  //printf("Go Away: %d, %d\n", x, y);
   if(pieces[x][y] == 0) {
     return false;
   } else {
     pieces[x][y] = 0;
-    std::map<coord,int>::iterator piece = placed_pieces.find(std::make_pair(x,y));
+    auto piece = placed_pieces.find(coord(x,y));
     if(piece == placed_pieces.end()) {
       return false;
     }
@@ -256,61 +227,39 @@ bool GoBoard::legalMove(int player, int x, int y) {
   return false;
 }
 
-//WARNING: ownership of moves being passed
-//need to clean up
-std::vector<coord>* GoBoard::getAllLegalMoves(int player) {
-  std::vector<coord>* moves = new std::vector<coord>;
-  for(int j = 0; j<BOARD_SIZE; ++j) {
-    for(int i = 0; i < BOARD_SIZE; ++i) {
-      GoBoard testBoard(*this);
-      bool test = testBoard.placePiece(player, j, i);
-      if(test) {
-        moves->push_back(std::make_pair(j,i));
+void GoBoard::getAllReasonableMoves(int player, coordList &reasonableMoves) {
+  reasonableMoves.empty();
+  
+  for(int x = 0; x < BOARD_SIZE; ++x) {
+    for(int y = 0; y < BOARD_SIZE; ++y) {
+      bool test = placePiece(player, x, y);
+      if(!test) {
+        continue;
       }
-    }
+      removePiece(x, y);
+      if   ( (y-1 >= 0 && !isMyPiece(player, x, y-1))
+          || (y+1 < BOARD_SIZE && !isMyPiece(player, x, y+1))
+          || (x-1 >= 0 && !isMyPiece(player, x-1, y))
+          || (x+1 < BOARD_SIZE && !isMyPiece(player, x+1, y))) {
+        reasonableMoves.putMove(x, y);
+        continue;
+      }
 
-  }
-  return moves;
-}
-//WARNING: ownership of moves being passed
-//need to clean up
-std::vector<coord>* GoBoard::getAllReasonableMoves(int player) {
-  std::vector<coord>* moves = getAllLegalMoves(player);
-  std::vector<coord>* return_moves = new std::vector<coord>;
-  
-  //of all legal moves, return those which are not moves
-  //that fill in single point eyes.
-  for(unsigned int e = 0; e < moves->size(); ++e) {
-    coord next = (*moves)[e];
-    coord up = std::make_pair(next.first, next.second-1);
-    coord down = std::make_pair(next.first, next.second+1);
-    coord right = std::make_pair(next.first+1, next.second);
-    coord left = std::make_pair(next.first-1, next.second);
-    
-    std::vector<coord> next_locs;
-    next_locs.push_back(up);
-    next_locs.push_back(down);
-    next_locs.push_back(left);
-    next_locs.push_back(right);
-    
-    for(unsigned int i=0; i< next_locs.size(); ++i) {    
-      coord next_loc = next_locs[i];
-      if(next_loc.first >= 0 
-        && next_loc.first < BOARD_SIZE
-        && next_loc.second >= 0 
-        && next_loc.second < BOARD_SIZE) {
-        //if at least one adjacent space isn't yours, then it's not a single point eye
-        if(pieces[next_loc.first][next_loc.second] != player) {
-          return_moves->push_back(next);
-          break;
-        }
+      //It's an eye if it has one or zero empty adjacent diagonals (except corners)
+      int count_empty_diagonals = 0;
+      if (y-1 >= 0) {
+        if (x-1 >= 0 && !isMyPiece(player, x-1, y-1)) count_empty_diagonals++;
+        if (x+1 < BOARD_SIZE && !isMyPiece(player, x+1, y+1)) count_empty_diagonals++;
+      }
+      if (y+1 < BOARD_SIZE) {
+        if (x-1 >= 0 && !isMyPiece(player, x-1, y-1)) count_empty_diagonals++;
+        if (x+1 < BOARD_SIZE && !isMyPiece(player, x+1, y+1)) count_empty_diagonals++;
+      }
+      if (count_empty_diagonals > 1) {
+        reasonableMoves.putMove(x, y);
       }
     }
   }
-  
-  delete moves;
-  
-  return return_moves;
 }
 
 void GoBoard::printControl() {
@@ -378,15 +327,15 @@ int GoBoard::endOfGame() {
 //Helper
 
 void GoBoard::calculateScores() {
-  for(std::map<coord,int>::iterator itr = placed_pieces.begin();
+  for(auto itr = placed_pieces.begin();
               itr != placed_pieces.end();
               itr++) {
     coord next = itr->first;
     
-    coord up = std::make_pair(next.first, next.second-1);
-    coord down = std::make_pair(next.first, next.second+1);
-    coord right = std::make_pair(next.first+1, next.second);
-    coord left = std::make_pair(next.first-1, next.second);
+    coord up(next.x, next.y-1);
+    coord down(next.x, next.y+1);
+    coord right(next.x+1, next.y);
+    coord left(next.x-1, next.y);
     
     fillLine(itr->first, up);
     fillLine(itr->first, right);
@@ -420,7 +369,7 @@ void GoBoard::updateControlMap(int player, int x, int y) {
     control[x][y] = 1.0*player;
   }
   
-  coord here = std::make_pair(x,y);
+  coord here(x,y);
   waveFrontPair firstEnergy = std::make_pair(here,1.0*player);
   
   waveFront.push(firstEnergy);
@@ -434,10 +383,10 @@ void GoBoard::updateControlMap(int player, int x, int y) {
     double current_power = newest.second;
     double next_power = current_power/2.0;
     
-    coord up = std::make_pair(next.first, next.second-1);
-    coord down = std::make_pair(next.first, next.second+1);
-    coord right = std::make_pair(next.first+1, next.second);
-    coord left = std::make_pair(next.first-1, next.second);
+    coord up(next.x, next.y-1);
+    coord down(next.x, next.y+1);
+    coord right(next.x+1, next.y);
+    coord left(next.x-1, next.y);
     
     std::vector<coord> next_locs;
     next_locs.push_back(up);
@@ -447,18 +396,18 @@ void GoBoard::updateControlMap(int player, int x, int y) {
     
     for(unsigned int i=0; i< next_locs.size(); ++i) {    
       coord next_loc = next_locs[i];
-      if(next_loc.first >= 0 
-        && next_loc.first < BOARD_SIZE
-        && next_loc.second >= 0 
-        && next_loc.second < BOARD_SIZE
+      if(next_loc.x >= 0 
+        && next_loc.x < BOARD_SIZE
+        && next_loc.x >= 0 
+        && next_loc.x < BOARD_SIZE
         && visited.find(next_loc) == visited.end()) {
         double result_power = next_power;
         //If opponents space
-        if(control[next_loc.first][next_loc.second]*next_power == -1) {
-          result_power += control[next_loc.first][next_loc.second];
+        if(control[next_loc.x][next_loc.y]*next_power == -1) {
+          result_power += control[next_loc.x][next_loc.y];
         }
         if((placed_pieces.find(next_loc)) == placed_pieces.end()) {
-          control[next_loc.first][next_loc.second] += next_power;
+          control[next_loc.x][next_loc.y] += next_power;
           
           if(fabs(result_power) > CONTROL_EPSILON) {
             waveFront.push(std::make_pair(next_loc,next_power));
@@ -485,16 +434,16 @@ void GoBoard::fillLine(coord start, coord dir) {
   //std::cout << player;
   
   while(placed_pieces.find(current) == placed_pieces.end()) {
-    int x = current.first;
-    int y = current.second;
+    int x = current.x;
+    int y = current.y;
     
     if(x >= 0
     && x < BOARD_SIZE
     && y >= 0
     && y < BOARD_SIZE) {
       score_board[x][y] += player;
-      current.first += dir.first;
-      current.second += dir.second;
+      current.x += dir.x;
+      current.y += dir.y;
     } else {
       break;
     }
@@ -520,114 +469,81 @@ void GoBoard::eraseControlMap(){
   }
 }
 
-//IMPORTANT: VECTOR PASSED FROM THIS FUNCTION NEEDS TO BE HANDLED!
-std::vector<coord>* GoBoard::getDeadPiecesForPlayer(int player, coord last_move) {
-  /*
-  std::vector<coord>* dead = new std::vector<coord>;
-  for(std::map<coord, int>::iterator itr = placed_pieces.begin(); 
-                  itr != placed_pieces.end();
-                  itr++) {
-    coord checkingCoord = itr->first;
-    if(getPlayerAtCoord(checkingCoord) == player) {
-      if(!stillAlive(checkingCoord)) {
-        dead->push_back(checkingCoord);
-      }
+int GoBoard::getDeadPiecesForPlayer(int player, coord last_move, coordList &chains) {
+  chains.empty();
+  int current_dead_count = 0;
+  int visited[BOARD_SIZE][BOARD_SIZE];
+  memset(visited, 0, sizeof(visited));
+  
+  std::array<coord, 4> adjacents;
+  adjacents[0] = coord(last_move.x, last_move.y-1);
+  adjacents[1] = coord(last_move.x, last_move.y+1);
+  adjacents[2] = coord(last_move.x+1, last_move.y);
+  adjacents[3] = coord(last_move.x-1, last_move.y);
+  
+  for(unsigned int i=0; i < adjacents.size(); ++i) {
+    coord next_loc = adjacents[i];
+    if(next_loc.x >= 0
+      && next_loc.x < BOARD_SIZE
+      && next_loc.y >= 0
+      && next_loc.y < BOARD_SIZE
+      && pieces[next_loc.x][next_loc.y] != player) {
+      current_dead_count = checkChainForDeadPieces(next_loc, visited, current_dead_count, chains);
     }
   }
-  */
-    std::vector<coord>* dead = new std::vector<coord>;  
-    std::map<coord,bool> dead_map;
-  
-    coord next = last_move;
+  if (chains.numCoords > 0) {
+    printf("You're toast: %d, %d\n", chains.getX(0), chains.getY(1));
+    printf("All %d of you\n", chains.numCoords);
+  }
     
-    coord up = std::make_pair(next.first, next.second-1);
-    coord down = std::make_pair(next.first, next.second+1);
-    coord right = std::make_pair(next.first+1, next.second);
-    coord left = std::make_pair(next.first-1, next.second);
-    
-    std::vector<coord> next_locs;
-    next_locs.push_back(up);
-    next_locs.push_back(down);
-    next_locs.push_back(left);
-    next_locs.push_back(right);
-    
-    for(unsigned int i=0; i< next_locs.size(); ++i) {
-      coord next_loc = next_locs[i];
-      if(next_loc.first >= 0 
-        && next_loc.first < BOARD_SIZE
-        && next_loc.second >= 0 
-        && next_loc.second < BOARD_SIZE
-        && pieces[next_loc.first][next_loc.second] == player) {
-        std::vector<coord>* new_dead = checkChainForDeadPieces(next_loc);
-        for(unsigned int d = 0; d < new_dead->size(); ++d) {
-          coord next_dead = (*new_dead)[d];
-          if(dead_map.find(next_dead) == dead_map.end()) {
-            dead -> push_back(next_dead);
-            dead_map.insert(std::make_pair(next_dead,true));
-          }
-        }
-        delete new_dead;
-      }
-    }
-    
-    return dead;
+  return current_dead_count;
 }
 
-//IMPORTANT: VECTOR PASSED FROM THIS FUNCTION NEEDS TO BE HANDLED!
-std::vector<coord>* GoBoard::checkChainForDeadPieces(coord piece) {
-  std::vector<coord>* dead = new std::vector<coord>;
-  ///////////////////
-  
-  std::queue<coord> chain;
-  waveFrontType visited;
-  
+
+int GoBoard::checkChainForDeadPieces(coord piece, int (&visited)[BOARD_SIZE][BOARD_SIZE], int already_visited, coordList &chain) {
+  if (visited[piece.x][piece.y]) return already_visited;
+
+  chain.putMove(piece.x, piece.y);
+  visited[piece.x][piece.y] = 1;
+
+  int num_visited = already_visited;
   int thisPlayer = getPlayerAtCoord(piece);
+  bool alive = false;
   
-  dead->push_back(piece);
-  chain.push(piece);
-  visited.insert(std::pair<coord,bool>(piece, true) );
-  
-  while(!chain.empty()) {
-    coord newest = chain.front();
-    coord next = newest;
-    chain.pop();
+  std::array<coord, 4> adjacents;
+  while (num_visited < chain.numCoords) {
+    coord current = chain.getMove(num_visited++);
     
-    coord up = std::make_pair(next.first, next.second-1);
-    coord down = std::make_pair(next.first, next.second+1);
-    coord right = std::make_pair(next.first+1, next.second);
-    coord left = std::make_pair(next.first-1, next.second);
+    adjacents[0] = coord(current.x, current.y-1);
+    adjacents[1] = coord(current.x, current.y+1);
+    adjacents[2] = coord(current.x+1, current.y);
+    adjacents[3] = coord(current.x-1, current.y);
     
-    std::vector<coord> next_locs;
-    next_locs.push_back(up);
-    next_locs.push_back(down);
-    next_locs.push_back(left);
-    next_locs.push_back(right);
-    
-    for(unsigned int i=0; i< next_locs.size(); ++i) {    
-      coord next_loc = next_locs[i];
-      if(next_loc.first >= 0 
-        && next_loc.first < BOARD_SIZE
-        && next_loc.second >= 0 
-        && next_loc.second < BOARD_SIZE
-        && visited.find(next_loc) == visited.end()) {
+    for(unsigned int i=0; i < adjacents.size(); ++i) {
+      coord testing = adjacents[i];
+      if (testing.x >= 0
+        && testing.x < BOARD_SIZE
+        && testing.y >= 0
+        && testing.y < BOARD_SIZE) {
         //If open square, the chain is still alive
-        if(pieces[next_loc.first][next_loc.second] == 0) {
-          dead->clear();
-          return dead;
-        } else if(pieces[next_loc.first][next_loc.second] == thisPlayer) {
-          chain.push(next_loc);
-          dead->push_back(next_loc);
-          visited.insert(std::pair<coord,bool>(next_loc, true) );
+        if (pieces[testing.x][testing.y] == 0) {
+          alive = true;
+        } else if (!visited[testing.x][testing.y] && pieces[testing.x][testing.y] == thisPlayer) {
+          visited[testing.x][testing.y] = 1;
+          chain.putMove(testing.x, testing.y);
         }
       }
     }
   }
-  
-  ///////////////////
-  return dead;
+  if (!alive) {
+    return num_visited;
+  } else {
+    chain.emptyTo(already_visited);
+    return already_visited;
+  }
 }
 
-bool GoBoard::stillAlive(coord piece) {
+/*bool GoBoard::stillAlive(coord piece) {
   std::queue<coord> chain;
   waveFrontType visited;
   
@@ -641,10 +557,10 @@ bool GoBoard::stillAlive(coord piece) {
     coord next = newest;
     chain.pop();
     
-    coord up = std::make_pair(next.first, next.second-1);
-    coord down = std::make_pair(next.first, next.second+1);
-    coord right = std::make_pair(next.first+1, next.second);
-    coord left = std::make_pair(next.first-1, next.second);
+    coord up(next.x, next.y-1);
+    coord down(next.x, next.y+1);
+    coord right(next.x+1, next.y);
+    coord left(next.x-1, next.y);
     
     std::vector<coord> next_locs;
     next_locs.push_back(up);
@@ -654,15 +570,15 @@ bool GoBoard::stillAlive(coord piece) {
     
     for(unsigned int i=0; i< next_locs.size(); ++i) {    
       coord next_loc = next_locs[i];
-      if(next_loc.first >= 0 
-        && next_loc.first < BOARD_SIZE
-        && next_loc.second >= 0 
-        && next_loc.second < BOARD_SIZE
+      if(next_loc.x >= 0 
+        && next_loc.x < BOARD_SIZE
+        && next_loc.y >= 0 
+        && next_loc.y < BOARD_SIZE
         && visited.find(next_loc) == visited.end()) {
         //If open square, the chain is still alive
-        if(pieces[next_loc.first][next_loc.second] == 0) {
+        if(pieces[next_loc.x][next_loc.y] == 0) {
           return true;
-        } else if(pieces[next_loc.first][next_loc.second] == thisPlayer) {
+        } else if(pieces[next_loc.x][next_loc.y] == thisPlayer) {
           chain.push(next_loc);
           visited.insert(std::pair<coord,bool>(next_loc, true) );
         }
@@ -670,18 +586,18 @@ bool GoBoard::stillAlive(coord piece) {
     }
   }
   return false;
-}
+}*/
 
 int GoBoard::getPlayerAtCoord(coord place) {
   return(placed_pieces_player.find(placed_pieces.find(place)->second)->second);
 }
 
-std::pair<std::pair<int, int>, int> GoBoard::getSpeculativePiece() const {
+std::pair<coord, int> GoBoard::getSpeculativePiece() const {
   return speculativePiece;
 }
 
 bool GoBoard::applySpeculativePiece() {
-  bool success = placePiece(turn, speculativePiece.first.first, speculativePiece.first.second);
+  bool success = placePiece(turn, speculativePiece.first.x, speculativePiece.first.y);
   if (success) {
     turn *= -1;
     just_passed = false;
@@ -691,5 +607,5 @@ bool GoBoard::applySpeculativePiece() {
 void GoBoard::placeSpeculativePiece(int player, int x, int y) {
   if (player == 0) return;
   assert(player == -1 || player == 1);
-  speculativePiece = std::make_pair(std::make_pair(x, y), player);
+  speculativePiece = std::make_pair(coord(x, y), player);
 }

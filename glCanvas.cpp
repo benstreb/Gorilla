@@ -137,7 +137,7 @@ void GLCanvas::mouse(int button, int state, int x, int y) {
           theBoard->passTurn();
         }
       } else {
-        theBoard->placePiece(theBoard->getTurn(), ai1_move.first, ai1_move.second);
+        theBoard->placePiece(theBoard->getTurn(), ai1_move.x, ai1_move.y);
         theBoard->nextTurn();
       }
     }
@@ -146,22 +146,22 @@ void GLCanvas::mouse(int button, int state, int x, int y) {
     if(success) {
       if(args->using_ai) {      
         coord ai_move = args->theAI->getMove(theBoard);
-        if(ai_move == std::make_pair(-1,-1)) {
+        if(ai_move == coord(-1,-1)) {
           if(theBoard->getJustPassed()) {
             theBoard->endOfGame();
           } else {
             theBoard->passTurn();
           }
         } else {
-          theBoard->placePiece(theBoard->getTurn(), ai_move.first, ai_move.second);
+          theBoard->placePiece(theBoard->getTurn(), ai_move.x, ai_move.y);
           theBoard->nextTurn();
         }
       } else if(args->ai_vs_ai) {
         coord ai2_move = args->theAI_2->getMove(theBoard);
-        if(ai2_move == std::make_pair(-1,-1)) {
+        if(ai2_move == coord(-1,-1)) {
           theBoard->passTurn();
         } else {
-          theBoard->placePiece(theBoard->getTurn(), ai2_move.first, ai2_move.second);
+          theBoard->placePiece(theBoard->getTurn(), ai2_move.x, ai2_move.y);
           theBoard->nextTurn();
         }        
       }
@@ -176,10 +176,10 @@ void GLCanvas::mouse(int button, int state, int x, int y) {
 
       if(args->using_ai) {
         coord ai_move = args->theAI->getMove(theBoard);
-        if(ai_move == std::make_pair(-1,-1)) {
+        if(ai_move == coord(-1,-1)) {
           theBoard->endOfGame();
         } else {
-          theBoard->placePiece(theBoard->getTurn(), ai_move.first, ai_move.second);
+          theBoard->placePiece(theBoard->getTurn(), ai_move.x, ai_move.y);
           theBoard->nextTurn();
         }
       }
@@ -384,13 +384,13 @@ void GLCanvas::keyboard(unsigned char key, int /*x*/, int /*y*/) {
     if(args->using_evaluator)
     {
       GoBoard* theBoard = &(mesh->editBoard());
-      std::pair<std::pair<int, int>, int>  speculation;
+      std::pair<coord, int> speculation;
       speculation = theBoard->getSpeculativePiece();
       coord spec_loc;
       spec_loc = speculation.first;
       int playa;
       playa = theBoard->getTurn();
-      std::cout << "Evaluate position: " << spec_loc.first << ", " << spec_loc.second << " for player: " << playa << std::endl;
+      std::cout << "Evaluate position: " << spec_loc.x << ", " << spec_loc.y << " for player: " << playa << std::endl;
       double res = 0;
       res = ((AI_Monte_Carlo*)args->evaluator)->evaluateMove(theBoard, playa, spec_loc);
       std::cout << "\t" << res << std::endl;
