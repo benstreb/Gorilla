@@ -88,6 +88,31 @@ double GoBoard::getBoardStateForPlayer(int player){
   return total;  
 }
 
+coord getArbitraryAdjacentSquare(int x, int y) {
+  if (x-1 < 0) {
+    return coord(x+1, y);
+  } else {
+    return coord(x-1, y);
+  }
+}
+
+int GoBoard::scoreFullBoard(int player) {
+  int score = 0;
+  for(int i = 0; i < BOARD_SIZE; ++i) {
+    for(int j = 0; j < BOARD_SIZE; ++j) {
+      if (pieces[i][j] == player) {
+        score += 1;
+      } else if (pieces[i][j] == 0) {
+        coord adj = getArbitraryAdjacentSquare(i, j);
+        if (pieces[adj.x][adj.y] == player) {
+          score += 1;
+        }
+      }
+    }
+  }
+  return score;
+}
+
 
 //Modifers
 bool GoBoard::placePiece(int player, int x, int y) {
@@ -105,18 +130,13 @@ bool GoBoard::placePiece(int player, int x, int y) {
   int newPieceID = nextPieceID;
   nextPieceID++;
   coord newCord(x, y);
-  placed_pieces.insert(std::make_pair(newCord, newPieceID));
-  placed_pieces_player.insert(std::make_pair(newPieceID, player));
+  //placed_pieces.insert(std::make_pair(newCord, newPieceID));
+  //placed_pieces_player.insert(std::make_pair(newPieceID, player));
     
   //Check for dead enemy pieces
   coordList dead;
   int num_dead_enemies = getDeadPiecesForPlayer(player*-1, newCord, dead);
   if (num_dead_enemies > 0) {
-    /*printf("at: %d, %d\n", newCord.x, newCord.y);
-    for (int i = 0; i < num_dead_enemies; i++) {
-      printf("%d, %d\n", dead.getMove(i).x, dead.getMove(i).y);
-    }
-    printf("------\n");*/
     removePieces(dead);
     if(num_dead_enemies == 1) {
       //std::cout << "Check for Ko!!!!!!!!!!!!!!!!! " << std::endl;
@@ -193,12 +213,12 @@ bool GoBoard::removePiece(int x, int y) {
     return false;
   } else {
     pieces[x][y] = 0;
-    auto piece = placed_pieces.find(coord(x,y));
+    /*auto piece = placed_pieces.find(coord(x,y));
     if(piece == placed_pieces.end()) {
       return false;
     }
     placed_pieces_player.erase(piece->second);
-    placed_pieces.erase(piece->first);
+    placed_pieces.erase(piece->first);*/
     return true;
   }
 }
@@ -487,14 +507,14 @@ int GoBoard::getDeadPiecesForPlayer(int player, coord last_move, coordList &chai
       && next_loc.x < BOARD_SIZE
       && next_loc.y >= 0
       && next_loc.y < BOARD_SIZE
-      && pieces[next_loc.x][next_loc.y] != player) {
+      && pieces[next_loc.x][next_loc.y] == -player) {
       current_dead_count = checkChainForDeadPieces(next_loc, visited, current_dead_count, chains);
     }
   }
-  if (chains.numCoords > 0) {
+  /*if (chains.numCoords > 0) {
     printf("You're toast: %d, %d\n", chains.getX(0), chains.getY(1));
     printf("All %d of you\n", chains.numCoords);
-  }
+  }*/
     
   return current_dead_count;
 }
@@ -589,7 +609,8 @@ int GoBoard::checkChainForDeadPieces(coord piece, int (&visited)[BOARD_SIZE][BOA
 }*/
 
 int GoBoard::getPlayerAtCoord(coord place) {
-  return(placed_pieces_player.find(placed_pieces.find(place)->second)->second);
+  return pieces[place.x][place.y];
+  //return(placed_pieces_player.find(placed_pieces.find(place)->second)->second);
 }
 
 std::pair<coord, int> GoBoard::getSpeculativePiece() const {

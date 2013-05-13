@@ -89,6 +89,7 @@ public:
   int getPiece(int x, int y) const {return pieces[x][y];}
   double getControl(int x, int y) const {return control[x][y];}
   double getBoardStateForPlayer(int player);
+  int scoreFullBoard(int player);
   bool getJustPassed(){return just_passed;}
 
   //Modifiers 
@@ -136,7 +137,11 @@ private:
 
   int getDeadPiecesForPlayer(int player, coord last_move, coordList &dead_pieces);
   int checkChainForDeadPieces(coord piece, int (&visited)[BOARD_SIZE][BOARD_SIZE], int already_visited, coordList &pieces);
-  //bool stillAlive(coord piece);
+  int stillAlive(coord piece) {
+    int visited[BOARD_SIZE][BOARD_SIZE];
+    coordList pieces;
+    return checkChainForDeadPieces(piece, visited, 0, pieces);
+  }
 
   int getPlayerAtCoord(coord place);
 

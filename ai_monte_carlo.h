@@ -7,7 +7,7 @@ class AI_Monte_Carlo : public AI{
 	
 	public:
 	
-	AI_Monte_Carlo(int playingAs, int games_ = 1, int turns_ = 1);
+	AI_Monte_Carlo(int playingAs, int games_ = 1);
 	~AI_Monte_Carlo();
 	
 	virtual coord getMove(GoBoard* board);

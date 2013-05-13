@@ -40,10 +40,8 @@ public:
         using_evaluator = true;
         i++; assert (i < argc);
         int games = atoi(argv[i]);
-        i++; assert (i < argc);
-        int turns = atoi(argv[i]);
     
-        evaluator = new AI_Monte_Carlo(0, games, turns);
+        evaluator = new AI_Monte_Carlo(0, games);
       } else if (!strcmp(argv[i],"-no_gui")) {
         gui = false;
       }
@@ -67,18 +65,16 @@ public:
       } else if (!strcmp(argv[i],"-ai_monte_carlo")) {
         i++; assert (i < argc);
         int games = atoi(argv[i]);
-        i++; assert (i < argc);
-        int turns = atoi(argv[i]);
         if(!ai_vs_ai) {
-          theAI = new AI_Monte_Carlo(1, games, turns);
+          theAI = new AI_Monte_Carlo(1, games);
           using_ai = true;      
         } else {
           assert(ai_id < 2);
           if(ai_id == 0) {
-            theAI = new AI_Monte_Carlo(-1, games, turns);
+            theAI = new AI_Monte_Carlo(-1, games);
             ai_id++;
           } else {
-            theAI_2 = new AI_Monte_Carlo(1, games, turns);
+            theAI_2 = new AI_Monte_Carlo(1, games);
             ai_id++;
           }
         }
