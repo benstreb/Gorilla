@@ -139,6 +139,7 @@ private:
   int checkChainForDeadPieces(coord piece, int (&visited)[BOARD_SIZE][BOARD_SIZE], int already_visited, coordList &pieces);
   int stillAlive(coord piece) {
     int visited[BOARD_SIZE][BOARD_SIZE];
+    memset(visited, 0, sizeof(visited));
     coordList pieces;
     return checkChainForDeadPieces(piece, visited, 0, pieces);
   }

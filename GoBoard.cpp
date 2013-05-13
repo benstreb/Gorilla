@@ -68,7 +68,7 @@ GoBoard::~GoBoard(){}
 
 
 //Accessors
-double GoBoard::getBoardStateForPlayer(int player){
+double GoBoard::getBoardStateForPlayer(int player) {
   double total = 0;
   for(int i = 0; i < BOARD_SIZE; ++i) {
     for(int j = 0; j < BOARD_SIZE; ++j) {
@@ -129,13 +129,13 @@ bool GoBoard::placePiece(int player, int x, int y) {
   pieces[x][y] = player;
   int newPieceID = nextPieceID;
   nextPieceID++;
-  coord newCord(x, y);
+  coord newCoord(x, y);
   //placed_pieces.insert(std::make_pair(newCord, newPieceID));
   //placed_pieces_player.insert(std::make_pair(newPieceID, player));
     
   //Check for dead enemy pieces
   coordList dead;
-  int num_dead_enemies = getDeadPiecesForPlayer(player*-1, newCord, dead);
+  int num_dead_enemies = getDeadPiecesForPlayer(player*-1, newCoord, dead);
   if (num_dead_enemies > 0) {
     removePieces(dead);
     if(num_dead_enemies == 1) {
@@ -153,11 +153,8 @@ bool GoBoard::placePiece(int player, int x, int y) {
     }
   } else {
     //check if placing the piece kills itself
-    int visited[BOARD_SIZE][BOARD_SIZE];
-    memset(visited, 0, sizeof(visited));
-    coordList dead;
     //If suicidal move
-    if(checkChainForDeadPieces(newCord, visited, 0, dead)) {
+    if (stillAlive(newCoord)) {
       //std::cout << "CHOOSE LIFE!" << std::endl;
       //rollback
       removePiece(x, y);
@@ -562,51 +559,6 @@ int GoBoard::checkChainForDeadPieces(coord piece, int (&visited)[BOARD_SIZE][BOA
     return already_visited;
   }
 }
-
-/*bool GoBoard::stillAlive(coord piece) {
-  std::queue<coord> chain;
-  waveFrontType visited;
-  
-  int thisPlayer = getPlayerAtCoord(piece);
-  
-  chain.push(piece);
-  visited.insert(std::pair<coord,bool>(piece, true) );
-  
-  while(!chain.empty()) {
-    coord newest = chain.front();
-    coord next = newest;
-    chain.pop();
-    
-    coord up(next.x, next.y-1);
-    coord down(next.x, next.y+1);
-    coord right(next.x+1, next.y);
-    coord left(next.x-1, next.y);
-    
-    std::vector<coord> next_locs;
-    next_locs.push_back(up);
-    next_locs.push_back(down);
-    next_locs.push_back(left);
-    next_locs.push_back(right);
-    
-    for(unsigned int i=0; i< next_locs.size(); ++i) {    
-      coord next_loc = next_locs[i];
-      if(next_loc.x >= 0 
-        && next_loc.x < BOARD_SIZE
-        && next_loc.y >= 0 
-        && next_loc.y < BOARD_SIZE
-        && visited.find(next_loc) == visited.end()) {
-        //If open square, the chain is still alive
-        if(pieces[next_loc.x][next_loc.y] == 0) {
-          return true;
-        } else if(pieces[next_loc.x][next_loc.y] == thisPlayer) {
-          chain.push(next_loc);
-          visited.insert(std::pair<coord,bool>(next_loc, true) );
-        }
-      }
-    }
-  }
-  return false;
-}*/
 
 int GoBoard::getPlayerAtCoord(coord place) {
   return pieces[place.x][place.y];
