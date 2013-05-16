@@ -20,7 +20,7 @@ AI_Monte_Carlo::~AI_Monte_Carlo(){
 }
 
 coord AI_Monte_Carlo::getMove(GoBoard* board) {
-  srand(time(NULL));
+  //srand(time(NULL));
   
   //std::cout << "moves for player: " << player << std::endl;
   coordList moves;
@@ -53,19 +53,20 @@ coord AI_Monte_Carlo::getMove(GoBoard* board) {
 
 double AI_Monte_Carlo::evaluateMove(GoBoard* board, int player, coord loc) {
   double total_score = 0;
-  bool valid = board->placePiece(player, loc.x, loc.y);
-  if (!valid) {
-    std::cout << "Evaluating an illegal move. What?" << std::endl;
-    return -1;
-  }
   coordList test_moves;
   for (int sim = 0; sim < games; ++sim) {
-    GoBoard testBoard(*board);
     int current_player = player;
     
-    //For the specified number of turns
+    GoBoard testBoard(*board);
+    bool valid = testBoard.makeMove(player, loc.x, loc.y);
+    if (!valid) {
+      std::cout << "Evaluating an illegal move. What?" << std::endl;
+      return -1;
+    }
+    
+    //For the until the game is over, or enough turns that it's clearly cycling.
     bool lastTurnPassed = false;
-    while (true) {
+    for (int i = 0; i < BOARD_SIZE*BOARD_SIZE*2; i++) {
       testBoard.getAllReasonableMoves(current_player, test_moves);
       int num_test_moves = test_moves.numCoords;
         
@@ -74,7 +75,7 @@ double AI_Monte_Carlo::evaluateMove(GoBoard* board, int player, coord loc) {
       if (num_test_moves != 0) {
         lastTurnPassed = false;
         test_choice = test_moves.getMove(rand() % num_test_moves);
-        testBoard.placePiece(current_player, test_choice.x, test_choice.y);
+        testBoard.makeMove(current_player, test_choice.x, test_choice.y);
       } else if (!lastTurnPassed) {
         lastTurnPassed = true;
       } else {

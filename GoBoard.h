@@ -92,8 +92,15 @@ public:
   int scoreFullBoard(int player);
   bool getJustPassed(){return just_passed;}
 
-  //Modifiers 
-  bool placePiece(int player, int x, int y);
+  //Modifiers
+  bool makeMove(int player, int x, int y) {
+    coordList dead;
+    dead.empty();
+    bool success = placePiece(player, x, y, dead);
+    removePieces(dead);
+    return success;
+  }
+  bool placePiece(int player, int x, int y, coordList &dead);
   void passTurn(){turn *= -1; just_passed = true;}
   void nextTurn(){turn *= -1; just_passed = false;}
 
@@ -135,7 +142,7 @@ private:
   bool isKo();
   bool isMyPiece(int player, int x, int y) { return pieces[x][y] == player; }
 
-  int getDeadPiecesForPlayer(int player, coord last_move, coordList &dead_pieces);
+  int getSurroundingDeadPieces(int player, coord last_move, coordList &dead_pieces);
   int checkChainForDeadPieces(coord piece, int (&visited)[BOARD_SIZE][BOARD_SIZE], int already_visited, coordList &pieces);
   int stillAlive(coord piece) {
     int visited[BOARD_SIZE][BOARD_SIZE];

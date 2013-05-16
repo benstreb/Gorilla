@@ -161,7 +161,7 @@ GoBoard &makeDemoBoard() {
     demoBoard = new GoBoard();
     for (int x = 0; x < 9; x++) {
       for (int y = 0; y < 9; y++) {
-        demoBoard->placePiece((x+y)%3-1, x, y);
+        demoBoard->makeMove((x+y)%3-1, x, y);
       }
     }
     demoBoard->placeSpeculativePiece(-1, 8, 8);

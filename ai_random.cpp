@@ -16,7 +16,7 @@ AI_Random::~AI_Random() {
 }
 
 coord AI_Random::getMove(GoBoard* board) {
-  srand (time(NULL));
+  //srand (0);
   
   //std::cout << "moves for player: " << player << std::endl;
   coordList moves;

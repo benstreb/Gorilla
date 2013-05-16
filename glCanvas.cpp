@@ -137,7 +137,7 @@ void GLCanvas::mouse(int button, int state, int x, int y) {
           theBoard->passTurn();
         }
       } else {
-        theBoard->placePiece(theBoard->getTurn(), ai1_move.x, ai1_move.y);
+        theBoard->makeMove(theBoard->getTurn(), ai1_move.x, ai1_move.y);
         theBoard->nextTurn();
       }
     }
@@ -153,7 +153,7 @@ void GLCanvas::mouse(int button, int state, int x, int y) {
             theBoard->passTurn();
           }
         } else {
-          theBoard->placePiece(theBoard->getTurn(), ai_move.x, ai_move.y);
+          theBoard->makeMove(theBoard->getTurn(), ai_move.x, ai_move.y);
           theBoard->nextTurn();
         }
       } else if(args->ai_vs_ai) {
@@ -161,7 +161,7 @@ void GLCanvas::mouse(int button, int state, int x, int y) {
         if(ai2_move == coord(-1,-1)) {
           theBoard->passTurn();
         } else {
-          theBoard->placePiece(theBoard->getTurn(), ai2_move.x, ai2_move.y);
+          theBoard->makeMove(theBoard->getTurn(), ai2_move.x, ai2_move.y);
           theBoard->nextTurn();
         }        
       }
@@ -179,7 +179,7 @@ void GLCanvas::mouse(int button, int state, int x, int y) {
         if(ai_move == coord(-1,-1)) {
           theBoard->endOfGame();
         } else {
-          theBoard->placePiece(theBoard->getTurn(), ai_move.x, ai_move.y);
+          theBoard->makeMove(theBoard->getTurn(), ai_move.x, ai_move.y);
           theBoard->nextTurn();
         }
       }

@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
           theBoard->passTurn();
         }
       } else {
-        theBoard->placePiece(theBoard->getTurn(), ai1_move.x, ai1_move.y);
+        theBoard->makeMove(theBoard->getTurn(), ai1_move.x, ai1_move.y);
         theBoard->nextTurn();
       }
     
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
           theBoard->passTurn();
         }
       } else {
-        theBoard->placePiece(theBoard->getTurn(), ai2_move.x, ai2_move.y);
+        theBoard->makeMove(theBoard->getTurn(), ai2_move.x, ai2_move.y);
         theBoard->nextTurn();
       }  
     }
