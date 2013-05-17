@@ -498,15 +498,15 @@ int GoBoard::getSurroundingDeadPieces(int player, coord last_move, coordList &ch
       && next_loc.y >= 0
       && next_loc.y < BOARD_SIZE
       && pieces[next_loc.x][next_loc.y] == -player) {
-      printf("looking at: %d, %d\n", next_loc.x, next_loc.y);
+      //printf("looking at: %d, %d\n", next_loc.x, next_loc.y);
       current_dead_count = checkChainForDeadPieces(next_loc, visited, current_dead_count, chains);
     }
   }
-  if (chains.numCoords > 0) {
+  /*if (chains.numCoords > 0) {
     printf("You're toast: %d, %d\n", chains.getX(0), chains.getY(0));
     printf("Bounty claimed by %d, %d\n", last_move.x, last_move.y);
     printf("All %d of you\n", chains.numCoords);
-  }
+  }*/
     
   return current_dead_count;
 }
