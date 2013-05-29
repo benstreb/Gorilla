@@ -557,6 +557,7 @@ int GoBoard::checkChainForDeadPieces(coord piece, int (&visited)[BOARD_SIZE][BOA
           visited[adjacents[i*2+x]][adjacents[i*2+y]] = 1;
           chain.putMove(adjacents[i*2+x], adjacents[i*2+y]);
         }
+      }
 #else
       coord current = adjacents[i];
       if (current.x >= 0
@@ -570,8 +571,8 @@ int GoBoard::checkChainForDeadPieces(coord piece, int (&visited)[BOARD_SIZE][BOA
           visited[current.x][current.y] = 1;
           chain.putMove(current.x, current.y);
         }
-#endif
       }
+#endif
     }
   }
   if (!alive) {
