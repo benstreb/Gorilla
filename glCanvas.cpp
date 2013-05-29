@@ -166,8 +166,7 @@ void GLCanvas::mouse(int button, int state, int x, int y) {
         }        
       }
     }
-  }
-  else if(mouseButton == GLUT_RIGHT_BUTTON && state == 0) {
+  } else if(mouseButton == GLUT_RIGHT_BUTTON && state == 0) {
     std::cout << "SKIP MY TURN" << std::endl;
     if(theBoard->getJustPassed()) {
       theBoard->endOfGame();
@@ -243,37 +242,22 @@ Matrix fromVec3fs(const Vec3f &a, const Vec3f &b, const Vec3f &c) {
 void GLCanvas::mouseRay(int mouseX, int mouseY) {
   auto square_hit = std::make_pair(-1, -1);
   Vec3f camPos = camera->camera_position;
-
-
-  Vec3f screenCenter = camPos - camera->getDirection();
+  Vec3f screenCenter = camPos + camera->getDirection();
   double screenHeight = 2 * tan(camera->getAngle()/2.0);
   Vec3f xAxis = camera->getHorizontal() * screenHeight;
-  Vec3f yAxis = camera->getScreenUp() * screenHeight;
-  Vec3f lowerLeft = screenCenter - 0.5*xAxis - 0.5*yAxis;
-  Vec3f screenPoint = lowerLeft + float(mouseX)/args->width * xAxis + float(mouseY)/args->height * yAxis;
+  Vec3f yAxis = -camera->getScreenUp() * screenHeight * 0.5;
+  Vec3f upperLeft = screenCenter - 0.5*xAxis - 0.5*yAxis;
+  Vec3f screenPoint = upperLeft + float(mouseX)/args->width * xAxis + float(mouseY)/args->height * yAxis;
   Vec3f dir = camPos - screenPoint;
-  Vec3f modDir = dir;
-  modDir /= dir.y();
-  modDir *= camPos.y() - 1;
+  Vec3f modifiedDir = dir;
+  modifiedDir /= modifiedDir.y();
+  modifiedDir *= camPos.y() - 0.5;
 
-  //Vec3f t = camPos - modDir;
-  /*glTranslatef(t.x() - .4*dir.x(), t.y() - .4*dir.y(), t.z() - .4*dir.z());
-  float color = 0.0;
-  for (int i = 0; i < 10; i++) {
-    glColor3f(color, color, color);
-    glTranslatef(-.1*dir.x(), -.1*dir.y(), -.1*dir.z());
-    glutSolidSphere(1, 5, 5);
-    color += 0.1;
-  }
-  glTranslatef(-t.x() - .6*dir.x(), -t.y() - .6*dir.y(), -t.z() - .6*dir.z());*/
+  Vec3f intersection = (camPos - modifiedDir);
 
-  Vec3f intersection = (camPos - modDir)*10;
-
-  square_hit = std::make_pair(-int(floor(intersection[0])), int(floor(intersection[2])));
-  //printf("%d, %d\n", square_hit.first, square_hit.second);
+  square_hit = std::make_pair(int(floor((intersection[0]+0.5)*9)), int(floor((intersection[2]+0.5)*9)));
 
   mesh->editBoard().placeSpeculativePiece(1, square_hit.first, square_hit.second);
-  //printf("%f, %f, %f\n", a[0], a[1], a[2]);
 }
 
 // =============================================================
